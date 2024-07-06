@@ -27,6 +27,7 @@ public class BarryController : MonoBehaviour
     private float health;
     public GameObject damageMessagePopUp;
     private bool isParrying;
+    private bool canParry;
 
     void Start()
     {
@@ -46,16 +47,21 @@ public class BarryController : MonoBehaviour
 
         if (!frozen && !hurt)
         {
-            if(Input.GetKeyDown(KeyCode.Z) && !attacking)
+            if (Input.GetKey(KeyCode.Z) && !attacking && !isParrying && canParry)
             {
-                if(grounded)
+                if (rigidbody2D.velocity.y >= 0)
                 {
-                    rigidbody2D.AddForce(UnityEngine.Vector2.up * jumpingForce, ForceMode2D.Impulse);
+                    rigidbody2D.AddForce(UnityEngine.Vector2.up * (jumpingForce + 0.5f), ForceMode2D.Impulse);
                 }
-                
+                else
+                {
+                    rigidbody2D.AddForce(UnityEngine.Vector2.up * (jumpingForce + 2.5f), ForceMode2D.Impulse);
+                }
+
                 animator.Play("BarryParry");
+                canParry = false;
                 isParrying = true;
-                animator.SetBool("Parrying",true);
+                animator.SetBool("Parrying", true);
             }
             if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && rigidbody2D.velocity.x > -2.5)
             {
@@ -78,9 +84,10 @@ public class BarryController : MonoBehaviour
 
 
             //  //Jumping
-            if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && grounded)
+            if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && grounded
+            && rigidbody2D.velocity.y == 0)
             {
-                rigidbody2D.AddForce(UnityEngine.Vector2.up * jumpingForce, ForceMode2D.Impulse);
+                rigidbody2D.AddForce(UnityEngine.Vector2.up * jumpingForce * 2, ForceMode2D.Impulse);
                 animator.SetBool("Jumping", true);
                 animator.Play("BarryJumps");
             }
@@ -150,7 +157,9 @@ public class BarryController : MonoBehaviour
     {
         if (coll.gameObject.tag == "Ground")
         {
+            canParry = true;
             grounded = true;
+            isParrying = false;
             animator.SetBool("Parrying", false);
             animator.SetBool("Jumping", false);
         }
@@ -162,34 +171,39 @@ public class BarryController : MonoBehaviour
 
     }
 
-    
+
 
     void freeze(float time)
     {
         freezeTimer = time;
-
     }
     void BarryGotAttacked(float damage)
     {
         if (!hurt)
         {
             hurtCoolDown = 0.5f;
-            animator.Play("BarryHurt");       
+            animator.Play("BarryHurt");
             health -= damage;
             damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
 
             Instantiate(damageMessagePopUp, this.gameObject.transform);
-        
+
         }
 
     }
 
     public bool getAttacking()
     {
-       return attacking;
+        return attacking;
     }
     public float getPowerAttack()
     {
-       return powerAttack;
+        return powerAttack;
+    }
+    void endParrying()
+    {
+        Debug.Log("...");
+        animator.SetBool("Parrying", false);
+        isParrying = false;
     }
 }

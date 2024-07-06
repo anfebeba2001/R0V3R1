@@ -36,12 +36,16 @@ public class EnemyController : MonoBehaviour
         if (readyToBeAttacked)
         {
             attackedCoolDown = 0.4f;
-            damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
+          
 
             SendMessage("Hitted",damage);
-            Instantiate(damageMessagePopUp, this.gameObject.transform);
+              
 
         }
+    }
+    public GameObject getDamageMessagePopUp()
+    {
+        return damageMessagePopUp;
     }
     
 

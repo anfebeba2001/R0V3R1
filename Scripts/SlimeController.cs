@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class SlimeController : MonoBehaviour
@@ -12,10 +13,10 @@ public class SlimeController : MonoBehaviour
     private GameObject playerDetected;
     private float speed = 5;
     private bool attacking;
-    private Color normalColor = new Color(1,1,1,1);
+    private Color normalColor = new Color(1, 1, 1, 1);
     private Color attackingColor = new Color(1.0f, 0.0f, 0.0f, 0.8f);
 
-    private Color searchingColor = new Color(1.0f, 0.0f, 0.0f, 0.18f);
+
     private Vector3 upAttackingPos;
     private float goingUpTimer;
     private float goingDownTimer;
@@ -29,11 +30,15 @@ public class SlimeController : MonoBehaviour
     private float normalRadius = 0.9f;
     private float tauntedRadius = 1.5f;
     private float damage = 300;
-    private float maxVel = 0.3f;
+    private float maxVel = 1f;
     private bool dying;
+    private GameObject damageMessagePopUp;
+    private bool firstAttacked;
+    private float firstAttackedTimer;
 
     void Start()
     {
+        damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
         dying = false;
         goingDownTimer = 500;
         goingUpTimer = 500;
@@ -42,17 +47,18 @@ public class SlimeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(health <= 0)
+        if (health <= 0)
         {
+            transform.localScale = new Vector3(transform.localScale.x + 0.05f, transform.localScale.y + 0.05f, transform.localScale.z);
             dying = true;
         }
-        if(dying)
+        if (dying)
         {
-            GetComponent<Animator>().SetBool("Dying",true);
+            GetComponent<Animator>().SetBool("Dying", true);
             GetComponent<Animator>().Play("SlimeDead");
         }
         taunted = GetComponentInParent<EnemyController>().getTaunted();
-        if(!taunted && !dying)
+        if (!taunted && !dying)
         {
             GetComponent<SpriteRenderer>().color = normalColor;
         }
@@ -61,22 +67,22 @@ public class SlimeController : MonoBehaviour
             searching = true;
             playerDetected = GetComponentInParent<EnemyController>().getPlayerDetected();
         }
-        if (taunted && searching && !attacking )
+        if (taunted && searching && !attacking)
         {
-            GetComponent<SpriteRenderer>().color = searchingColor;
+            GetComponent<SpriteRenderer>().color = attackingColor;
             if (playerDetected.transform.position.x > transform.position.x && GetComponent<Rigidbody2D>().velocity.x < maxVel)
             {
                 GetComponent<Rigidbody2D>().AddForce(Vector2.right * speed, ForceMode2D.Force);
             }
-            else if (playerDetected.transform.position.x < transform.position.x &&  GetComponent<Rigidbody2D>().velocity.x > -maxVel)
+            else if (playerDetected.transform.position.x < transform.position.x && GetComponent<Rigidbody2D>().velocity.x > -maxVel)
             {
 
                 GetComponent<Rigidbody2D>().AddForce(Vector2.left * speed, ForceMode2D.Force);
             }
         }
         if (attacking)
-        {        
-            
+        {
+
             searching = false;
             GetComponent<SpriteRenderer>().color = attackingColor;
             playerDetected.GetComponent<CapsuleCollider2D>().isTrigger = true;
@@ -92,18 +98,18 @@ public class SlimeController : MonoBehaviour
             if (goingUpTimer < goingUpLimit)
             {
                 goingUpTimer += Time.deltaTime;
-                upAttackingPos.y += goingUpVelocity; 
+                upAttackingPos.y += goingUpVelocity;
                 goingUp = true;
             }
-            else 
+            else
             {
-                if(goingUp)
+                if (goingUp)
                 {
                     goingDownTimer = 0;
-                      goingUp = false;
-                      goingDown = true;
+                    goingUp = false;
+                    goingDown = true;
                 }
-              
+
             }
 
             if (goingDownTimer < goingDownLimit && goingDown)
@@ -111,25 +117,33 @@ public class SlimeController : MonoBehaviour
                 goingDownTimer += Time.deltaTime;
                 upAttackingPos.y -= goingDownVelocity;
             }
-            else if(goingDown && !(goingDownTimer < goingDownLimit))
+            else if (goingDown && !(goingDownTimer < goingDownLimit))
             {
                 attacking = false;
                 searching = true;
                 goingDown = false;
-                GetComponent<SpriteRenderer>().color = searchingColor;
+                GetComponent<SpriteRenderer>().color = attackingColor;
                 playerDetected.GetComponent<CapsuleCollider2D>().isTrigger = false;
                 transform.localScale = new UnityEngine.Vector3(2, 2f, 1);
                 GetComponent<Rigidbody2D>().isKinematic = false;
                 fixedPlayerPosition = playerDetected.transform.position;
                 fixedPlayerPosition.x -= 1.5f;
                 playerDetected.transform.position = fixedPlayerPosition;
-                playerDetected.SendMessage("BarryGotAttacked",damage);
-                
+                playerDetected.SendMessage("BarryGotAttacked", damage);
+
                 playerDetected.GetComponent<Rigidbody2D>().isKinematic = false;
-                playerDetected.GetComponent<Rigidbody2D>().AddForce(new Vector2(-5,5), ForceMode2D.Impulse);
+                playerDetected.GetComponent<Rigidbody2D>().AddForce(new Vector2(-5, 5), ForceMode2D.Impulse);
             }
 
-            
+
+        }
+        if(firstAttackedTimer > 0)
+        {
+            firstAttackedTimer -= Time.deltaTime;
+        }
+        else{
+            firstAttacked = false;
+            GetComponent<Rigidbody2D>().gravityScale = 1f;
         }
     }
     void OnCollisionStay2D(Collision2D coll)
@@ -138,15 +152,15 @@ public class SlimeController : MonoBehaviour
         {
             goingUpTimer = 0;
             coll.gameObject.SendMessage("freeze", 3.3f);
-            upAttackingPos = playerDetected.transform.position;  
+            upAttackingPos = playerDetected.transform.position;
             attacking = true;
             searching = false;
         }
-       if (coll.gameObject.tag == "Ground")
-       {
+        if (coll.gameObject.tag == "Ground")
+        {
             goingDownTimer = 500;
-       }
-            
+        }
+
     }
     void setRadius(GameObject enemy)
     {
@@ -155,15 +169,34 @@ public class SlimeController : MonoBehaviour
     }
     void Hitted(float damage)
     {
-        health -= damage;
-        if(playerDetected.transform.position.x < transform.position.x)
+
+        if (firstAttacked)
         {
-             GetComponent<Rigidbody2D>().AddForce(Vector2.right * 7, ForceMode2D.Impulse);
+            health -= damage;
+            damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
+            Instantiate(damageMessagePopUp, this.gameObject.transform);
+            if (playerDetected.transform.position.x < transform.position.x)
+            {
+                GetComponent<Rigidbody2D>().AddForce(Vector2.right * 7, ForceMode2D.Impulse);
+            }
+            else
+            {
+                GetComponent<Rigidbody2D>().AddForce(Vector2.left * 7, ForceMode2D.Impulse);
+            }
+            firstAttacked = false;
+            GetComponent<Rigidbody2D>().gravityScale = 1f;
         }
         else
         {
-            GetComponent<Rigidbody2D>().AddForce(Vector2.left * 7, ForceMode2D.Impulse);
+            damageMessagePopUp.GetComponent<TextMeshPro>().text = "BLOCKED!!";
+            Instantiate(damageMessagePopUp, this.gameObject.transform);
+            GetComponent<Rigidbody2D>().AddForce(new Vector2(0.3f,1) * 2, ForceMode2D.Impulse);
+            GetComponent<Rigidbody2D>().gravityScale = 0.1f;
+            firstAttacked = true;
+            firstAttackedTimer = 2f;
         }
+
+
     }
     void Die()
     {
