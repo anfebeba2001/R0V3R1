@@ -6,6 +6,8 @@ using UnityEngine.UIElements;
 
 public class EnemyController : MonoBehaviour
 {
+    
+
     // Start is called before the first frame update
     private bool taunted;
     private GameObject playerDetected;
@@ -14,6 +16,7 @@ public class EnemyController : MonoBehaviour
     public GameObject damageMessagePopUp;
     void Start()
     {
+        
         taunted = false;
     }
 

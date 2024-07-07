@@ -15,6 +15,10 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(mainCamera.GetComponent<Camera>().orthographicSize < 1.8f)
+        {
+            mainCamera.GetComponent<Camera>().orthographicSize += 0.0025f;
+        }
         Vector3 playerPositionFixed = player.transform.position;
         playerPositionFixed.z = -20;
         mainCamera.transform.position = playerPositionFixed;

@@ -6,9 +6,12 @@ using UnityEngine;
 public class BarrySwordAttackController : MonoBehaviour
 {
     private GameObject parent;
+    private GameObject mainCamera;
+
     // Start is called before the first frame update
     void Start()
     {
+        mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         parent = gameObject.transform.parent.gameObject;
     }
 
@@ -22,6 +25,7 @@ public class BarrySwordAttackController : MonoBehaviour
         if (coll.gameObject.tag == "Enemy" && parent.GetComponent<BarryController>().getAttacking())
         {
             coll.gameObject.SendMessage("Attacked", parent.GetComponent<BarryController>().getPowerAttack());
+            mainCamera.GetComponent<Camera>().orthographicSize -= 0.1f;
         }
 
     }

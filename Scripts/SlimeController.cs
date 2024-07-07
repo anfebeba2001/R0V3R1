@@ -35,9 +35,12 @@ public class SlimeController : MonoBehaviour
     private GameObject damageMessagePopUp;
     private bool firstAttacked;
     private float firstAttackedTimer;
+    public GameObject effectHandler;
+    private float hittedEffecTimer;
 
     void Start()
     {
+
         damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
         dying = false;
         goingDownTimer = 500;
@@ -47,6 +50,21 @@ public class SlimeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (effectHandler.transform.localScale.x > 0)
+        {
+            effectHandler.SetActive(true);
+            hittedEffecTimer -= Time.deltaTime;
+            effectHandler.transform.localScale = new Vector3(
+                effectHandler.transform.localScale.x - 0.02f,
+                effectHandler.transform.localScale.x - 0.02f,
+                effectHandler.transform.localScale.x - 0.02f
+            );
+        }
+        else
+        {
+            effectHandler.SetActive(false);
+
+        }
         if (health <= 0)
         {
             transform.localScale = new Vector3(transform.localScale.x + 0.05f, transform.localScale.y + 0.05f, transform.localScale.z);
@@ -137,18 +155,19 @@ public class SlimeController : MonoBehaviour
 
 
         }
-        if(firstAttackedTimer > 0)
+        if (firstAttackedTimer > 0)
         {
             firstAttackedTimer -= Time.deltaTime;
         }
-        else{
+        else
+        {
             firstAttacked = false;
             GetComponent<Rigidbody2D>().gravityScale = 1f;
         }
     }
     void OnCollisionStay2D(Collision2D coll)
     {
-        if (coll.gameObject.tag == "Player")
+        if (coll.gameObject.tag == "Player" && health > 0 && playerDetected != null)
         {
             goingUpTimer = 0;
             coll.gameObject.SendMessage("freeze", 3.3f);
@@ -169,7 +188,7 @@ public class SlimeController : MonoBehaviour
     }
     void Hitted(float damage)
     {
-
+        effectHandler.transform.localScale = new Vector3(1, 1, 1);
         if (firstAttacked)
         {
             health -= damage;
@@ -190,8 +209,8 @@ public class SlimeController : MonoBehaviour
         {
             damageMessagePopUp.GetComponent<TextMeshPro>().text = "BLOCKED!!";
             Instantiate(damageMessagePopUp, this.gameObject.transform);
-            GetComponent<Rigidbody2D>().AddForce(new Vector2(0.3f,1) * 2, ForceMode2D.Impulse);
-            GetComponent<Rigidbody2D>().gravityScale = 0.1f;
+            GetComponent<Rigidbody2D>().AddForce(new Vector2(0.3f, 2) * 2, ForceMode2D.Impulse);
+            GetComponent<Rigidbody2D>().gravityScale = 0.4f;
             firstAttacked = true;
             firstAttackedTimer = 2f;
         }

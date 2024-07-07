@@ -26,11 +26,17 @@ public class BarryController : MonoBehaviour
     private float maxHealth;
     private float health;
     public GameObject damageMessagePopUp;
-    private bool isParrying;
-    private bool canParry;
+    public GameObject arrow;
+    private GameObject mainCamera;
+    private float damageOnBow = 10;
+
+    private float bowCoolDown = 3;
+    private bool isBowing;
 
     void Start()
     {
+        bowCoolDown = 0;
+        mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         maxHealth = 1000;
         health = maxHealth;
         rigidbody2D = GetComponent<Rigidbody2D>();
@@ -42,27 +48,13 @@ public class BarryController : MonoBehaviour
 
     void FixedUpdate()
     {
+       
         //Movement
         //  //Running
 
         if (!frozen && !hurt)
         {
-            if (Input.GetKey(KeyCode.Z) && !attacking && !isParrying && canParry)
-            {
-                if (rigidbody2D.velocity.y >= 0)
-                {
-                    rigidbody2D.AddForce(UnityEngine.Vector2.up * (jumpingForce + 0.5f), ForceMode2D.Impulse);
-                }
-                else
-                {
-                    rigidbody2D.AddForce(UnityEngine.Vector2.up * (jumpingForce + 2.5f), ForceMode2D.Impulse);
-                }
-
-                animator.Play("BarryParry");
-                canParry = false;
-                isParrying = true;
-                animator.SetBool("Parrying", true);
-            }
+           
             if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && rigidbody2D.velocity.x > -2.5)
             {
                 rigidbody2D.AddForce(UnityEngine.Vector2.left * speed, ForceMode2D.Force);
@@ -101,13 +93,20 @@ public class BarryController : MonoBehaviour
                 animator.SetBool("Running", true);
             }
             //Atacks
-            if (Input.GetKey(KeyCode.X) && !attacking && readyToAttack && !isParrying)
+            if (Input.GetKey(KeyCode.X) && !attacking && readyToAttack )
             {
                 attackCoolDown = 0.7f;
                 attacking = true;
                 animator.Play("BarryAttacks");
             }
-
+            //Bow
+            if (Input.GetKeyDown(KeyCode.Z) && !attacking && bowCoolDown <= 0 && !isBowing)
+            {
+                animator.Play("BarryBow");
+                bowCoolDown = 0.6f;
+                isBowing = true;
+                attacking = true;
+            }
         }
 
 
@@ -143,6 +142,14 @@ public class BarryController : MonoBehaviour
         {
             hurt = false;
         }
+        if(bowCoolDown > 0)
+        {
+            bowCoolDown -= Time.deltaTime;
+        }
+        else
+        {
+            isBowing = false;
+        }
     }
     //Getters
     public float getHealth()
@@ -153,14 +160,23 @@ public class BarryController : MonoBehaviour
     {
         return maxHealth;
     }
+    public float getDamageOnBow()
+    {
+        return damageOnBow;
+    }
+
+
+
+
+
     void OnCollisionStay2D(Collision2D coll)
     {
         if (coll.gameObject.tag == "Ground")
         {
-            canParry = true;
+
             grounded = true;
-            isParrying = false;
-            animator.SetBool("Parrying", false);
+  
+
             animator.SetBool("Jumping", false);
         }
     }
@@ -187,7 +203,7 @@ public class BarryController : MonoBehaviour
             damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
 
             Instantiate(damageMessagePopUp, this.gameObject.transform);
-
+            mainCamera.GetComponent<Camera>().orthographicSize -= 0.2f;
         }
 
     }
@@ -200,10 +216,10 @@ public class BarryController : MonoBehaviour
     {
         return powerAttack;
     }
-    void endParrying()
+
+    void instantiateArrow()
     {
-        Debug.Log("...");
-        animator.SetBool("Parrying", false);
-        isParrying = false;
+        Instantiate(arrow, this.gameObject.transform);
+        isBowing = false;
     }
 }
