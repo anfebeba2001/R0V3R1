@@ -22,12 +22,14 @@ public class BarryController : MonoBehaviour
     private bool running;
     private bool healing;
     public bool readyToAttack;
-    public float attackCoolDown = 0;
+    private float attackCoolDown = 0;
     private float healingCoolDown;
     private float hurtCoolDown;
     private bool hurt;
-    public float maxHealth;
-    public float health;
+    private float maxHealth;
+    private float health;
+    private float stamina;
+    private float maxStamina;
     public GameObject damageMessagePopUp;
     public GameObject arrow;
     private GameObject mainCamera;
@@ -52,12 +54,13 @@ public class BarryController : MonoBehaviour
     {
         bowCoolDown = 0;
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        maxHealth = 300;
+        maxHealth = 100;
         health = maxHealth;
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
         attacking = false;
+        maxStamina = 100;
     }
 
 
@@ -125,17 +128,19 @@ public class BarryController : MonoBehaviour
                 animator.SetBool("Running", true);
             }
             //Atacks
-            if ((Input.GetKey(KeyCode.X) || attackButtonValue > 0 )&& !attacking && readyToAttack && attackCoolDown <= 0)
+            if ((Input.GetKey(KeyCode.X) || attackButtonValue > 0 )&& !attacking && readyToAttack && attackCoolDown <= 0 && stamina >= 30)
             {
                 attackCoolDown = 0.9f;
+                stamina -= 30;
                 attacking = true;
                 animator.Play("BarryAttacks");
             }
             //Bow
-            if (Input.GetKeyDown(KeyCode.Z) || bowButtonValue > 0 && !attacking && bowCoolDown <= 0 && !isBowing)
+            if (Input.GetKeyDown(KeyCode.Z) || bowButtonValue > 0 && !attacking && bowCoolDown <= 0 && !isBowing && stamina >= 10)
             {
                 animator.Play("BarryBow");
                 bowCoolDown = 0.6f;
+                stamina -= 10;
                 isBowing = true;
                 attacking = true;
             }
@@ -292,6 +297,14 @@ public class BarryController : MonoBehaviour
             health = maxHealth;
         }
     }
+
+    public float getStamina(){
+        return stamina;
+    }
+    public float getMaxStamina(){
+        return maxStamina;
+    }
+    
 
 
 
