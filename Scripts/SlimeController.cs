@@ -11,7 +11,7 @@ public class SlimeController : MonoBehaviour
     private bool taunted;
     private bool searching;
     private GameObject playerDetected;
-    private float speed = 5;
+    private float speed = 7;
     private bool attacking;
     private Color normalColor = new Color(1, 1, 1, 1);
     private Color attackingColor = new Color(1.0f, 0.0f, 0.0f, 0.8f);
@@ -29,18 +29,20 @@ public class SlimeController : MonoBehaviour
     private float goingDownVelocity = 0.24f;
     private float normalRadius = 0.9f;
     private float tauntedRadius = 1.5f;
-    private float damage = 300;
-    private float maxVel = 1f;
+    private float damage = 30;
+    private float maxVel = 1.5f;
     private bool dying;
     private GameObject damageMessagePopUp;
+    private GameObject blood;
     private bool firstAttacked;
     private float firstAttackedTimer;
-    public GameObject effectHandler;
+
     private float hittedEffecTimer;
 
     void Start()
     {
 
+        blood = GetComponent<EnemyController>().getBlood();
         damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
         dying = false;
         goingDownTimer = 500;
@@ -50,21 +52,7 @@ public class SlimeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (effectHandler.transform.localScale.x > 0)
-        {
-            effectHandler.SetActive(true);
-            hittedEffecTimer -= Time.deltaTime;
-            effectHandler.transform.localScale = new Vector3(
-                effectHandler.transform.localScale.x - 0.02f,
-                effectHandler.transform.localScale.x - 0.02f,
-                effectHandler.transform.localScale.x - 0.02f
-            );
-        }
-        else
-        {
-            effectHandler.SetActive(false);
 
-        }
         if (health <= 0)
         {
             transform.localScale = new Vector3(transform.localScale.x + 0.05f, transform.localScale.y + 0.05f, transform.localScale.z);
@@ -111,7 +99,7 @@ public class SlimeController : MonoBehaviour
             fixedPlayerPosition.y -= 0.25f;
             playerDetected.transform.position = fixedPlayerPosition;
             transform.position = upAttackingPos;
-
+            GetComponent<CapsuleCollider2D>().isTrigger = true;
 
             if (goingUpTimer < goingUpLimit)
             {
@@ -140,6 +128,7 @@ public class SlimeController : MonoBehaviour
                 attacking = false;
                 searching = true;
                 goingDown = false;
+                GetComponent<CapsuleCollider2D>().isTrigger = false;
                 GetComponent<SpriteRenderer>().color = attackingColor;
                 playerDetected.GetComponent<CapsuleCollider2D>().isTrigger = false;
                 transform.localScale = new UnityEngine.Vector3(2, 2f, 1);
@@ -188,16 +177,31 @@ public class SlimeController : MonoBehaviour
     }
     void Hitted(float damage)
     {
-        effectHandler.transform.localScale = new Vector3(1, 1, 1);
+        blood.transform.position = transform.position;
+        blood.GetComponent<bloodController>().setParent(gameObject);
+        damageMessagePopUp.transform.position = transform.position;
+        damageMessagePopUp.GetComponent<DamageMessagePopUpController>().setShowTime(0.5f);
         if (firstAttacked)
         {
             health -= damage;
             damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
-            Instantiate(damageMessagePopUp, this.gameObject.transform);
-            if (playerDetected.transform.position.x < transform.position.x)
+            
+
+
+            if (health > 0)
             {
-                GetComponent<Rigidbody2D>().AddForce(Vector2.right * 7, ForceMode2D.Impulse);
+                Instantiate(blood);
+                Instantiate(damageMessagePopUp, this.transform);
             }
+
+            if (playerDetected != null)
+            {
+                if (playerDetected.transform.position.x < transform.position.x)
+                {
+                    GetComponent<Rigidbody2D>().AddForce(Vector2.right * 7, ForceMode2D.Impulse);
+                }
+            }
+
             else
             {
                 GetComponent<Rigidbody2D>().AddForce(Vector2.left * 7, ForceMode2D.Impulse);
@@ -207,8 +211,13 @@ public class SlimeController : MonoBehaviour
         }
         else
         {
-            damageMessagePopUp.GetComponent<TextMeshPro>().text = "BLOCKED!!";
-            Instantiate(damageMessagePopUp, this.gameObject.transform);
+            Instantiate(blood);
+            if(!attacking)
+            {
+                damageMessagePopUp.GetComponent<TextMeshPro>().text = "BLOCKED!!";
+            }
+            
+            Instantiate(damageMessagePopUp, this.transform);
             GetComponent<Rigidbody2D>().AddForce(new Vector2(0.3f, 2) * 2, ForceMode2D.Impulse);
             GetComponent<Rigidbody2D>().gravityScale = 0.4f;
             firstAttacked = true;
@@ -217,8 +226,19 @@ public class SlimeController : MonoBehaviour
 
 
     }
+    void HittedByBow(float damage)
+    {
+        Hitted(damage);
+    }
     void Die()
     {
+        if(attacking)
+        {
+                playerDetected.GetComponent<CapsuleCollider2D>().isTrigger = false;
+                transform.localScale = new UnityEngine.Vector3(2, 2f, 1);
+                playerDetected.transform.position = fixedPlayerPosition;
+                playerDetected.GetComponent<Rigidbody2D>().isKinematic = false;
+        }
         Destroy(this.gameObject);
     }
 }

@@ -221,13 +221,13 @@ public class MushController : MonoBehaviour
         {
             blood.transform.position = transform.position;
             blood.GetComponent<bloodController>().setParent(gameObject);
-            damageMessagePopUp.GetComponent<DamageMessagePopUpController>().setParent(gameObject);
+            damageMessagePopUp.transform.position = transform.position;
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().setShowTime(0.5f);
             if (parried)
             {
                 blood.transform.localScale = new Vector3(2.5f,2.5f , 3);
                 damageMessagePopUp.transform.localScale = new Vector3(
-                 damageMessagePopUp.transform.localScale.x * 3, damageMessagePopUp.transform.localScale.y *3, 3);
+                damageMessagePopUp.transform.localScale.x * 3, damageMessagePopUp.transform.localScale.y *3, 3);
 
                 damageMessagePopUp.GetComponent<TextMeshPro>().text = "CRITICAL!!! ";
                 ParriedEnd();
@@ -278,9 +278,10 @@ public class MushController : MonoBehaviour
     {
         if (finishingAttack)
         {
+            damageMessagePopUp.transform.position = transform.position;
             GetComponent<Animator>().Play("MushParried");
             damageMessagePopUp.GetComponent<TextMeshPro>().text = "Thats a PARRY!!! ";
-            Instantiate(damageMessagePopUp);
+            Instantiate(damageMessagePopUp, this.transform);
             searching = false;
             attacking = false;
             parried = true;

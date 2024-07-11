@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviour
     private float attackedCoolDown;
     private bool readyToBeAttacked;
     public GameObject damageMessagePopUp;
+    public GameObject bloodFX;
     void Start()
     {
         
@@ -50,7 +51,10 @@ public class EnemyController : MonoBehaviour
     {
         return damageMessagePopUp;
     }
-    
+    public GameObject getBlood()
+    {
+        return bloodFX;
+    }
 
     //GETTERS
     public bool getTaunted()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,5 +46,15 @@ public class EnemyDetector : MonoBehaviour
     public void setTauntedRadius(float tauntedRadius)
     {
         this.tauntedRadius = tauntedRadius;
+    }
+
+    internal void setTauntedRadius(object tauntedRadius)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void setNormalRadius(object normalRadius)
+    {
+        throw new NotImplementedException();
     }
 }

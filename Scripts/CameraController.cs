@@ -19,6 +19,11 @@ public class CameraController : MonoBehaviour
         {
             mainCamera.GetComponent<Camera>().orthographicSize += 0.0025f;
         }
+        if(mainCamera.GetComponent<Camera>().orthographicSize < 0.7f)
+        {
+            mainCamera.GetComponent<Camera>().orthographicSize += 0.025f;
+        }
+
         Vector3 playerPositionFixed = player.transform.position;
         playerPositionFixed.z = -20;
         mainCamera.transform.position = playerPositionFixed;
