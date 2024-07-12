@@ -1,14 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
+//using System.Numerics;
 using TMPro;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class BarryController : MonoBehaviour
 {
-    private float speed = 10.0f;
+    private float speed = 5.0f;
     private float powerAttack = 20;
     private float jumpingForce = 2.5f;
     private float freezeTimer;
@@ -20,7 +21,6 @@ public class BarryController : MonoBehaviour
     private bool frozen;
     public bool attacking;
     private bool running;
-    private bool healing;
     public bool readyToAttack;
     private float attackCoolDown = 0;
     private float healingCoolDown;
@@ -36,8 +36,11 @@ public class BarryController : MonoBehaviour
     private float damageOnBow = 10;
 
     private float bowCoolDown = 3;
-    private bool isBowing;
+    private float staminaCoolDown;
+    public bool isBowing;
+    private bool freeState;
 
+    private float horizontal;
 
     private UnityEngine.Vector2 moveDirection;
     private float jumpButtonValue;
@@ -52,25 +55,21 @@ public class BarryController : MonoBehaviour
 
     void Start()
     {
-        bowCoolDown = 0;
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         maxHealth = 100;
+        maxStamina = 100;
         health = maxHealth;
+        stamina = maxStamina;
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
-        attacking = false;
-        maxStamina = 100;
+        freeState = true;
     }
 
 
     void FixedUpdate()
     {
-        if(healing && health > 0)
-        {
-            healing = false;
-            animator.Play("BarryHeal");
-        }
+
         if(health <= 0)
         {
             animator.Play("BarryDead");
@@ -84,66 +83,65 @@ public class BarryController : MonoBehaviour
         //Movement
         //  //Running
 
-        if (!frozen && !hurt && health> 0 && !healing )
+
+        if(freeState){
+
+            //Running
+            Run();
+
+            //Jump
+            Jump();
+            
+            //Attacking
+            Attack();
+
+            //BowAttack
+            BowAttack();
+
+            //Healing
+
+            //Hit
+        }
+        
+
+
+        if (frozen || hurt || health<=0 || isBowing)
         {
-            if(healingCoolDown <= 0  && (healthButtonValue>0 || Input.GetKey(KeyCode.F))) 
-            {
-                healingCoolDown = 1;
-                healing = true;
-                
-            }
-            if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || moveDirection.x < 0) && rigidbody2D.velocity.x > -2.5)
-            {
-                rigidbody2D.AddForce(UnityEngine.Vector2.left * speed, ForceMode2D.Force);
-                transform.localScale = new UnityEngine.Vector3(-2, 2, 1);
-                running = true;
-            }
-            else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) || moveDirection.x > 0) && rigidbody2D.velocity.x < 2.5)
-            {
-                rigidbody2D.AddForce(UnityEngine.Vector2.right * speed, ForceMode2D.Force);
-                transform.localScale = new UnityEngine.Vector3(2, 2, 1);
-                running = true;
-            }
-            else
-            {
-                running = false;
-            }
+            freeState =  false;
+            
+            
 
 
-            //  //Jumping
-            if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || jumpButtonValue == 1) && grounded
-            && rigidbody2D.velocity.y == 0)
-            {
-                rigidbody2D.AddForce(UnityEngine.Vector2.up * jumpingForce * 2, ForceMode2D.Impulse);
-                animator.SetBool("Jumping", true);
-                animator.Play("BarryJumps");
-            }
+            
             //Moving animations
-            if (!running)
+            /*if (!running)
             {
                 animator.SetBool("Running", false);
             }
             else
             {
                 animator.SetBool("Running", true);
-            }
+            }*/
             //Atacks
-            if ((Input.GetKey(KeyCode.X) || attackButtonValue > 0 )&& !attacking && readyToAttack && attackCoolDown <= 0 && stamina >= 30)
+            /*if ((Input.GetKey(KeyCode.X) || attackButtonValue > 0 )&& !attacking && readyToAttack && attackCoolDown <= 0 && stamina >= 30)
             {
                 attackCoolDown = 0.9f;
                 stamina -= 30;
                 attacking = true;
                 animator.Play("BarryAttacks");
-            }
+            }*/
             //Bow
-            if (Input.GetKeyDown(KeyCode.Z) || bowButtonValue > 0 && !attacking && bowCoolDown <= 0 && !isBowing && stamina >= 10)
+            /*if (Input.GetKeyDown(KeyCode.Z) || bowButtonValue > 0 && !attacking && bowCoolDown <= 0 && !isBowing && stamina >= 10)
             {
                 animator.Play("BarryBow");
                 bowCoolDown = 0.6f;
                 stamina -= 10;
                 isBowing = true;
                 attacking = true;
-            }
+            }*/
+        }
+        else{
+            freeState = true;
         }
 
 
@@ -191,7 +189,74 @@ public class BarryController : MonoBehaviour
         {
             isBowing = false;
         }
+        //Stamina
+        if(stamina < maxStamina && Time.time > staminaCoolDown + 1){
+            stamina += 0.2f;
+        }
     }
+
+    private void Healing(){
+        if (healingCoolDown <= 0 && (healthButtonValue > 0 || Input.GetKey(KeyCode.F)))
+        {
+            healingCoolDown = 1;
+        }
+    }
+
+    private void Run(){
+        
+        horizontal = Input.GetAxisRaw("Horizontal");
+
+        if (horizontal < 0 || moveDirection.x < 0)
+        {
+            transform.localScale = new Vector3(-2, 2, 1);
+        }
+        else if(horizontal > 0 || moveDirection.x > 0)
+        {
+            transform.localScale = new Vector3(2, 2, 1);
+        }
+
+        if(horizontal != 0){
+            rigidbody2D.velocity = new Vector2(horizontal * speed, rigidbody2D.velocity.y);
+        }
+        else if (moveDirection.x != 0){
+            rigidbody2D.velocity = new Vector2(moveDirection.x * speed, rigidbody2D.velocity.y);
+        }
+        
+        animator.Play("BarryRuns");
+    }
+
+    private void Jump(){
+        if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || jumpButtonValue == 1) && grounded
+            && rigidbody2D.velocity.y == 0)
+        {
+            rigidbody2D.AddForce(UnityEngine.Vector2.up * jumpingForce * 2, ForceMode2D.Impulse);
+            animator.SetBool("Jumping", true);
+            animator.Play("BarryJumps");
+        }
+    }
+
+    private void Attack(){
+        if ((Input.GetKey(KeyCode.X) || attackButtonValue > 0) && attackCoolDown <= 0 && stamina >= 30)
+        {
+            attackCoolDown = 0.9f;
+            stamina -= 30;
+            staminaCoolDown = Time.time;
+            animator.Play("BarryAttacks");
+        }
+    }
+
+    private void BowAttack(){
+        if ((Input.GetKey(KeyCode.H) || bowButtonValue > 0) && bowCoolDown <= 0 && stamina >= 10)
+        {
+            bowCoolDown = 0.6f;
+            isBowing = true;
+            stamina -= 10;
+            staminaCoolDown = Time.time;
+            animator.Play("BarryBow");
+            rigidbody2D.velocity = new Vector2(0, rigidbody2D.velocity.y);
+        }
+    }
+
     //Getters
     public float getHealth()
     {
@@ -238,8 +303,7 @@ public class BarryController : MonoBehaviour
             health -= damage;
             damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().showingTimer = 0.5f;
-            damageMessagePopUp.transform.position = transform.position;
-            Instantiate(damageMessagePopUp, this.transform);
+            Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.2f;
         }
 
@@ -251,8 +315,7 @@ public class BarryController : MonoBehaviour
             damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().showingTimer = 0.5f;
             health -= damage;
-            damageMessagePopUp.transform.position = transform.position;
-            Instantiate(damageMessagePopUp, this.transform);
+            Instantiate(damageMessagePopUp, transform);
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.01f;
         }
     }
