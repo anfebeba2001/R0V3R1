@@ -12,13 +12,6 @@ public class DamageMessagePopUpController : MonoBehaviour
     void Start()
     {
         textMeshPro = gameObject.GetComponent<TextMeshPro>();
-        if(transform.parent.transform.position.x > 0)
-        {
-            transform.localScale = new Vector3(0.09256908f,0.09256908f,transform.localScale.z);
-        }
-        else{
-           transform.localScale = new Vector3(-0.09256908f,0.09256908f,transform.localScale.z);
-        }
      
     }
 

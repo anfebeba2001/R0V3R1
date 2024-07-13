@@ -191,7 +191,7 @@ public class SlimeController : MonoBehaviour
             if (health > 0)
             {
                 Instantiate(blood);
-                Instantiate(damageMessagePopUp, this.transform);
+                Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
             }
 
             if (playerDetected != null)
@@ -217,7 +217,7 @@ public class SlimeController : MonoBehaviour
                 damageMessagePopUp.GetComponent<TextMeshPro>().text = "BLOCKED!!";
             }
             
-            Instantiate(damageMessagePopUp, this.transform);
+            Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
             GetComponent<Rigidbody2D>().AddForce(new Vector2(0.3f, 2) * 2, ForceMode2D.Impulse);
             GetComponent<Rigidbody2D>().gravityScale = 0.4f;
             firstAttacked = true;

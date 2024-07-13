@@ -99,6 +99,7 @@ public class BarryController : MonoBehaviour
             BowAttack();
 
             //Healing
+            Healing();
 
             //Hit
         }
@@ -199,6 +200,7 @@ public class BarryController : MonoBehaviour
         if (healingCoolDown <= 0 && (healthButtonValue > 0 || Input.GetKey(KeyCode.F)))
         {
             healingCoolDown = 1;
+            animator.Play("BarryHeal");
         }
     }
 
@@ -217,12 +219,17 @@ public class BarryController : MonoBehaviour
 
         if(horizontal != 0){
             rigidbody2D.velocity = new Vector2(horizontal * speed, rigidbody2D.velocity.y);
+            animator.SetBool("Running", horizontal != 0.0f);
         }
         else if (moveDirection.x != 0){
             rigidbody2D.velocity = new Vector2(moveDirection.x * speed, rigidbody2D.velocity.y);
+            animator.SetBool("Running", moveDirection.x != 0.0f);
+        }
+        else{
+            animator.SetBool("Running", false);
         }
         
-        animator.Play("BarryRuns");
+        //animator.Play("BarryRuns");
     }
 
     private void Jump(){
@@ -241,12 +248,13 @@ public class BarryController : MonoBehaviour
             attackCoolDown = 0.9f;
             stamina -= 30;
             staminaCoolDown = Time.time;
+            attacking = true;
             animator.Play("BarryAttacks");
         }
     }
 
     private void BowAttack(){
-        if ((Input.GetKey(KeyCode.H) || bowButtonValue > 0) && bowCoolDown <= 0 && stamina >= 10)
+        if ((Input.GetKey(KeyCode.Z) || bowButtonValue > 0) && bowCoolDown <= 0 && stamina >= 10)
         {
             bowCoolDown = 0.6f;
             isBowing = true;
@@ -315,7 +323,7 @@ public class BarryController : MonoBehaviour
             damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().showingTimer = 0.5f;
             health -= damage;
-            Instantiate(damageMessagePopUp, transform);
+            Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.01f;
         }
     }

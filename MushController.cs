@@ -281,7 +281,7 @@ public class MushController : MonoBehaviour
             damageMessagePopUp.transform.position = transform.position;
             GetComponent<Animator>().Play("MushParried");
             damageMessagePopUp.GetComponent<TextMeshPro>().text = "Thats a PARRY!!! ";
-            Instantiate(damageMessagePopUp, this.transform);
+            Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
             searching = false;
             attacking = false;
             parried = true;
