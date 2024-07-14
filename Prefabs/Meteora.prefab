@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 336138481167630344}
   - component: {fileID: 1611651481215417804}
   - component: {fileID: 7083533775300648561}
-  - component: {fileID: 3807824933543749389}
+  - component: {fileID: 7421284314341278167}
   m_Layer: 0
   m_Name: Meteora
   m_TagString: Untagged
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 1358122017615610118}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.012526, y: 15.755955, z: 0}
+  m_LocalPosition: {x: -13.52, y: 9.65, z: 0}
   m_LocalScale: {x: 3.2345, y: 3.2345, z: 3.2345}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -96,7 +96,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -120,8 +120,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f13cdace9ff636f4580b8763c560ecad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!58 &3807824933543749389
-CircleCollider2D:
+--- !u!61 &7421284314341278167
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -149,9 +149,19 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.008643925, y: 0.023050316}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.96, y: 0.48}
+    newSize: {x: 0.64, y: 0.64687496}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Size: {x: 0.73526, y: 0.22644673}
+  m_EdgeRadius: 0
