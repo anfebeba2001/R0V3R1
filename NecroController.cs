@@ -8,7 +8,7 @@ using Debug = UnityEngine.Debug;
 
 public class NecroController : MonoBehaviour
 {
-    private float normalRadius = 5f;
+    private float normalRadius = 5.1f;
     private float tauntedRadius = 5f;
 
     public GameObject fireRinge;
