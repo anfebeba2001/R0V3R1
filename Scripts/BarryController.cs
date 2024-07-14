@@ -12,6 +12,8 @@ public class BarryController : MonoBehaviour
     private float speed = 5.0f;
     private float powerAttack = 20;
     private float jumpingForce = 2.5f;
+    private int healingVials = 3;
+    private int arrows = 10;
     private float freezeTimer;
 
     private new Rigidbody2D rigidbody2D;
@@ -31,7 +33,7 @@ public class BarryController : MonoBehaviour
     private float stamina;
     private float maxStamina;
     public GameObject damageMessagePopUp;
-    public GameObject arrow;
+    public GameObject arrowPrefab;
     private GameObject mainCamera;
     private float damageOnBow = 10;
 
@@ -91,6 +93,9 @@ public class BarryController : MonoBehaviour
 
             //Jump
             Jump();
+
+            //Dash
+            Dash();
             
             //Attacking
             Attack();
@@ -100,46 +105,12 @@ public class BarryController : MonoBehaviour
 
             //Healing
             Healing();
-
-            //Hit
         }
         
-
 
         if (frozen || hurt || health<=0 || isBowing)
         {
             freeState =  false;
-            
-            
-
-
-            
-            //Moving animations
-            /*if (!running)
-            {
-                animator.SetBool("Running", false);
-            }
-            else
-            {
-                animator.SetBool("Running", true);
-            }*/
-            //Atacks
-            /*if ((Input.GetKey(KeyCode.X) || attackButtonValue > 0 )&& !attacking && readyToAttack && attackCoolDown <= 0 && stamina >= 30)
-            {
-                attackCoolDown = 0.9f;
-                stamina -= 30;
-                attacking = true;
-                animator.Play("BarryAttacks");
-            }*/
-            //Bow
-            /*if (Input.GetKeyDown(KeyCode.Z) || bowButtonValue > 0 && !attacking && bowCoolDown <= 0 && !isBowing && stamina >= 10)
-            {
-                animator.Play("BarryBow");
-                bowCoolDown = 0.6f;
-                stamina -= 10;
-                isBowing = true;
-                attacking = true;
-            }*/
         }
         else{
             freeState = true;
@@ -197,9 +168,10 @@ public class BarryController : MonoBehaviour
     }
 
     private void Healing(){
-        if (healingCoolDown <= 0 && (healthButtonValue > 0 || Input.GetKey(KeyCode.F)))
+        if (healingCoolDown <= 0 && healingVials >= 1 && health<maxHealth && (healthButtonValue > 0 || Input.GetKey(KeyCode.F)))
         {
             healingCoolDown = 1;
+            healingVials -= 1;
             animator.Play("BarryHeal");
         }
     }
@@ -242,6 +214,14 @@ public class BarryController : MonoBehaviour
         }
     }
 
+    private void Dash(){
+        if (Input.GetKey(KeyCode.C))
+        {
+            animator.SetBool("Dashing", true);
+            animator.Play("BarryDash");
+        }
+    }
+
     private void Attack(){
         if ((Input.GetKey(KeyCode.X) || attackButtonValue > 0) && attackCoolDown <= 0 && stamina >= 30)
         {
@@ -254,9 +234,10 @@ public class BarryController : MonoBehaviour
     }
 
     private void BowAttack(){
-        if ((Input.GetKey(KeyCode.Z) || bowButtonValue > 0) && bowCoolDown <= 0 && stamina >= 10)
+        if ((Input.GetKey(KeyCode.Z) || bowButtonValue > 0) && bowCoolDown <= 0 && arrows >= 1 && stamina >= 10)
         {
             bowCoolDown = 0.6f;
+            arrows -= 1;
             isBowing = true;
             stamina -= 10;
             staminaCoolDown = Time.time;
@@ -273,6 +254,12 @@ public class BarryController : MonoBehaviour
     public float getMaxHealth()
     {
         return maxHealth;
+    }
+    public int getHealingVials(){
+        return healingVials;
+    }
+    public int getNumberOfArrows(){
+        return arrows;
     }
     void OnCollisionStay2D(Collision2D coll)
     {
@@ -339,17 +326,17 @@ public class BarryController : MonoBehaviour
 
     void instantiateArrow()
     {
-        arrow.transform.position = transform.position;
-        if (transform.localScale.x > 0)
-        {
-            arrow.transform.localScale = new UnityEngine.Vector3(1, 1, 1);
+        Vector3 direction;
+        if(transform.localScale.x > 0){
+            direction = Vector2.right;
         }
-        else
-        {
-            arrow.transform.localScale = new UnityEngine.Vector3(-1, 1, 1);
+        else{
+            direction = Vector2.left;
         }
-        arrow.GetComponent<ArrowController>().damage = damageOnBow;
-        Instantiate(arrow);
+
+        GameObject arrow = Instantiate(arrowPrefab, transform.position + direction*0.1f, Quaternion.Euler(0, 0, -90));
+        arrow.GetComponent<ArrowController>().SetDirection(direction);
+        arrow.GetComponent<ArrowController>().setDamage(damageOnBow);
         isBowing = false;
     }
     void endingAttack()
