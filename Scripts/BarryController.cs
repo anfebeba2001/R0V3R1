@@ -15,6 +15,7 @@ public class BarryController : MonoBehaviour
     private int healingVials = 3;
     private int arrows = 10;
     private float freezeTimer;
+    private bool groundTouched;
 
     private new Rigidbody2D rigidbody2D;
     private Animator animator;
@@ -38,8 +39,10 @@ public class BarryController : MonoBehaviour
     private float damageOnBow = 10;
 
     private float bowCoolDown = 3;
+    private float dashCoolDown;
     private float staminaCoolDown;
-    public bool isBowing;
+    private bool isBowing;
+    private bool isDashing;
     private bool freeState;
 
     private float horizontal;
@@ -58,7 +61,7 @@ public class BarryController : MonoBehaviour
     void Start()
     {
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        maxHealth = 100;
+        maxHealth = 1000;
         maxStamina = 100;
         health = maxHealth;
         stamina = maxStamina;
@@ -108,7 +111,7 @@ public class BarryController : MonoBehaviour
         }
         
 
-        if (frozen || hurt || health<=0 || isBowing)
+        if (frozen || hurt || health<=0 || isBowing || isDashing)
         {
             freeState =  false;
         }
@@ -165,6 +168,10 @@ public class BarryController : MonoBehaviour
         if(stamina < maxStamina && Time.time > staminaCoolDown + 1){
             stamina += 0.2f;
         }
+        //Dash
+        if(dashCoolDown >0){
+            dashCoolDown -= Time.deltaTime;
+        }
     }
 
     private void Healing(){
@@ -200,24 +207,40 @@ public class BarryController : MonoBehaviour
         else{
             animator.SetBool("Running", false);
         }
-        
-        //animator.Play("BarryRuns");
     }
 
     private void Jump(){
         if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || jumpButtonValue == 1) && grounded
             && rigidbody2D.velocity.y == 0)
         {
-            rigidbody2D.AddForce(UnityEngine.Vector2.up * jumpingForce * 2, ForceMode2D.Impulse);
+            rigidbody2D.AddForce(Vector2.up * jumpingForce * 2, ForceMode2D.Impulse);
             animator.SetBool("Jumping", true);
             animator.Play("BarryJumps");
         }
     }
 
     private void Dash(){
-        if (Input.GetKey(KeyCode.C))
+        if (Input.GetKey(KeyCode.C) && dashCoolDown <= 0 && !isDashing && groundTouched)
         {
-            animator.SetBool("Dashing", true);
+            float dashForce = 0;
+            if(rigidbody2D.velocity.y > 0){
+                dashForce = 1.5f;
+            }
+            else if (rigidbody2D.velocity.y < 0){
+                dashForce = 4.5f;
+            }
+            else{
+                dashForce = 4f;
+            }
+            
+            if(transform.localScale.x > 0){
+                rigidbody2D.AddForce(new Vector2(1.5f * 2.5f, 1.5f * dashForce), ForceMode2D.Impulse);
+            }
+            else{
+                rigidbody2D.AddForce(new Vector2(-1.5f * 2.5f, 1.5f * dashForce), ForceMode2D.Impulse);
+            }
+            isDashing = true;
+            groundTouched = false;
             animator.Play("BarryDash");
         }
     }
@@ -266,8 +289,9 @@ public class BarryController : MonoBehaviour
         if (coll.gameObject.tag == "Ground")
         {
 
-            grounded = true;
+            groundTouched = true;
 
+            grounded = true;
 
             animator.SetBool("Jumping", false);
         }
@@ -289,6 +313,9 @@ public class BarryController : MonoBehaviour
     {
         if (!hurt && hurtCoolDown <= 0)
         {
+            if(isDashing){
+                isDashing = false;
+            }
             hurtCoolDown = 0.5f;
             if(health > 0)
             {animator.Play("BarryHurt");
@@ -363,6 +390,10 @@ public class BarryController : MonoBehaviour
         return maxStamina;
     }
     
+    public void finishDash(){
+        isDashing = false;
+        dashCoolDown = 0.5f;
+    }
 
 
 
