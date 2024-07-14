@@ -14,9 +14,11 @@ public class SkeletonWaveController : MonoBehaviour
     private float originalScale;
     private Vector3 fixedScale;
     private bool ended;
+    private float lifeTime;
 
     void Start()
     {
+        lifeTime = 5;
         reversed = false;
         ended = false;
         GetComponent<SpriteRenderer>().color = originalColor;
@@ -26,6 +28,11 @@ public class SkeletonWaveController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        lifeTime -= Time.deltaTime;
+        if(lifeTime <= 0)
+        {
+            ended = true;
+        }
         if(!ended)
         {
 

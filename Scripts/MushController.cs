@@ -220,7 +220,6 @@ public class MushController : MonoBehaviour
         if (triggerlyCanBeAttacked)
         {
             blood.transform.position = transform.position;
-            blood.GetComponent<bloodController>().setParent(gameObject);
             damageMessagePopUp.transform.position = transform.position;
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().setShowTime(0.5f);
             if (parried)
@@ -239,7 +238,7 @@ public class MushController : MonoBehaviour
                 {
                     GetComponent<Rigidbody2D>().AddForce(Vector2.left*2, ForceMode2D.Impulse);
                 }
-                Instantiate(damageMessagePopUp);
+                Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
                 
                  damageMessagePopUp.transform.localScale = new Vector3(damageMessagePopUp.transform.localScale.x / 3, damageMessagePopUp.transform.localScale.y /3, 3);
 
@@ -248,8 +247,8 @@ public class MushController : MonoBehaviour
                 damageMessagePopUp.transform.localScale = new Vector3(
                     damageMessagePopUp.transform.localScale.x * 2, damageMessagePopUp.transform.localScale.y *2, 3);
 
-                Instantiate(damageMessagePopUp);
-                Instantiate(blood);
+                Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+                Instantiate(blood, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
                  blood.transform.localScale = new Vector3(1f,1f , 3);
                 damageMessagePopUp.transform.localScale = new Vector3(
                     damageMessagePopUp.transform.localScale.x / 2, damageMessagePopUp.transform.localScale.y /2, 3);
@@ -260,8 +259,8 @@ public class MushController : MonoBehaviour
 
                 damageMessagePopUp.GetComponent<TextMeshPro>().text = (damage - defense) + " ";
                 health -= (damage - defense);
-                Instantiate(blood);
-                Instantiate(damageMessagePopUp);
+                Instantiate(blood, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+                Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
                 if (playerDetected.transform.position.x < transform.position.x)
                 {
                     GetComponent<Rigidbody2D>().AddForce(Vector2.right, ForceMode2D.Impulse);

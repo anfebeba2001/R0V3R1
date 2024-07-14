@@ -8,7 +8,7 @@ using Debug = UnityEngine.Debug;
 
 public class NecroController : MonoBehaviour
 {
-    private float normalRadius = 5.1f;
+    private float normalRadius = 5f;
     private float tauntedRadius = 5f;
 
     public GameObject fireRinge;
@@ -28,6 +28,7 @@ public class NecroController : MonoBehaviour
     public Vector3[] possiblePositionFireRing = new Vector3[10];
     private float infernoCoolDown;
     private float meteoraCoolDown;
+    private float summonCoolDown;
 
     void Start()
     {
@@ -50,61 +51,14 @@ public class NecroController : MonoBehaviour
         {
             meteoraAttack();
         }
-        /*if(taunted && health > 0 && attackCoolDown <= 0)
+        if(taunted && summonCoolDown <= 0)
         {
-            playerDetected = GetComponentInParent<EnemyController>().getPlayerDetected();
-            if(freeState)
-            {
-                attackCoolDown = 90f;
-                resting = false;
-                
-                switch((Random.Range(1,12)%4))
-                {
-                    case 0:
-                        if(health < maxHealth)
-                        {
-                            freeState = false;
-                            heal();
-                        }
-                        else
-                        {
-                            attackCoolDown = 0f;
-                            resting = true;
-                        }
-                    break;
-                    case 1:
-                        freeState = false;
-                        inferno();
-                    break;
-                    case 2:
-                        freeState = false;
-                        inferno();
-                    break;
-                    case 3:
-                    if(health < maxHealth)
-                        {
-                            freeState = false;
-                            summon();
-                        }
-                        else
-                        {
-                            attackCoolDown = 0f;
-                            resting = true;
-                        }
-                        
-                    break;
-                }
-            }
+            summon();
         }
-        else if(health <= 0)
-        {
-            GetComponent<Animator>().Play("NecroDead");
-        }
-   
-        else if(resting)
-        {
-            GetComponent<Animator>().Play("NecroIddle");
-        }*/
+    
+        
+          
+    
 
         //Timer
     
@@ -113,6 +67,10 @@ public class NecroController : MonoBehaviour
             if(infernoCoolDown > 0)
             {
                 infernoCoolDown -= Time.deltaTime;
+            }
+            if(summonCoolDown > 0)
+            {
+                summonCoolDown -= Time.deltaTime;
             }
             if(meteoraCoolDown > 0)
             {
@@ -147,7 +105,17 @@ public class NecroController : MonoBehaviour
 
     private void summon()
     {
-        throw new System.NotImplementedException();
+        summonCoolDown = 20f;
+        SkeletonSoldier.transform.position = new Vector3(transform.position.x+(Random.Range(-6,6)),transform.position.y+7,transform.position.z);
+        if(SkeletonSoldier.transform.position.x > transform.position.x )
+        {
+            SkeletonSoldier.transform.localScale = new Vector3(-1,1,0);
+        }
+        else
+        {
+            SkeletonSoldier.transform.localScale = new Vector3(1,1,0);
+        }
+        Instantiate(SkeletonSoldier);
     }
 
     private void inferno()

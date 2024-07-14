@@ -178,7 +178,6 @@ public class SlimeController : MonoBehaviour
     void Hitted(float damage)
     {
         blood.transform.position = transform.position;
-        blood.GetComponent<bloodController>().setParent(gameObject);
         damageMessagePopUp.transform.position = transform.position;
         damageMessagePopUp.GetComponent<DamageMessagePopUpController>().setShowTime(0.5f);
         if (firstAttacked)

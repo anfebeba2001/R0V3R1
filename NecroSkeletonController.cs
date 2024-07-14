@@ -11,6 +11,7 @@ public class NecroSkeletonController : MonoBehaviour
     private float attackCoolDown;
     public GameObject skeletonWave;
     private Vector3 fixedScale;
+    private Vector3 fixedPos;
     private bool hitted;
     private GameObject blood;
     private GameObject damageMessagePopUp;
@@ -21,7 +22,7 @@ public class NecroSkeletonController : MonoBehaviour
         blood = GetComponent<EnemyController>().getBlood();
         damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
         hitted = false;
-        health = 30;
+        health = 50;
     }
 
     // Update is called once per frame
@@ -61,6 +62,8 @@ public class NecroSkeletonController : MonoBehaviour
         attackCoolDown = 2;
         skeletonWave.transform.position = transform.position;
         fixedScale = skeletonWave.transform.localScale;
+        fixedPos = skeletonWave.transform.position;
+        fixedPos.y -= 0.4f;
             
             
         if(transform.localScale.x > 0)
@@ -78,6 +81,11 @@ public class NecroSkeletonController : MonoBehaviour
     }
     void Death(){
       health = 0; 
+      damageMessagePopUp.GetComponent<TextMeshPro>().text =  "CRITICAL!! ";
+        Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+        Instantiate(blood, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+        GetComponent<Rigidbody2D>().AddForce(Vector2.right, ForceMode2D.Impulse);
+        GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
     }
     void finishDeath()
     {
@@ -90,14 +98,11 @@ public class NecroSkeletonController : MonoBehaviour
         health -= damage;
         hitted = true;
         damageMessagePopUp.GetComponent<TextMeshPro>().text = (damage) + " ";
-                health -= (damage);
-                Instantiate(blood);
-                Instantiate(damageMessagePopUp);
-             
-                    GetComponent<Rigidbody2D>().AddForce(Vector2.right, ForceMode2D.Impulse);
-                
-              
-                    GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
+        health -= (damage);
+        Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+        Instantiate(blood, transform.position + new Vector3(0, 0f, 0), Quaternion.identity);
+        GetComponent<Rigidbody2D>().AddForce(Vector2.right, ForceMode2D.Impulse);
+        GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
         }
     }
     void finishHitted()
