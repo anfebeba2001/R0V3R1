@@ -9330,7 +9330,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireRinge: {fileID: 7650950806223634884, guid: 4fd9defa80d0f384081237353bc4e9a0, type: 3}
   meteora: {fileID: 1358122017615610118, guid: aa4086cdebb461a4a95a5b1f0a8d5c51, type: 3}
-  SkeletonSoldier: {fileID: 0}
+  SkeletonSoldier: {fileID: 1500213604558219330, guid: cfe37e7457fcbb046abc9054df76fd65, type: 3}
   possiblePositionFireRing:
   - {x: -2.5, y: 10.7, z: 0}
   - {x: -5.5, y: 9.7, z: 0}
@@ -20491,15 +20491,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5007219636398204147, guid: 42fd8af663c8bd94d9ae3089a6e5e02d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.3
+      value: -8.31
       objectReference: {fileID: 0}
     - target: {fileID: 5007219636398204147, guid: 42fd8af663c8bd94d9ae3089a6e5e02d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 10.17
+      value: 11.3
       objectReference: {fileID: 0}
     - target: {fileID: 5007219636398204147, guid: 42fd8af663c8bd94d9ae3089a6e5e02d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 5007219636398204147, guid: 42fd8af663c8bd94d9ae3089a6e5e02d, type: 3}
       propertyPath: m_LocalRotation.w

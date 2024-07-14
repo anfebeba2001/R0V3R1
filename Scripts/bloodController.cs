@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class bloodController : MonoBehaviour
 {
-    public GameObject parent;
     void Start()
     {
         GetComponent<Animator>().Play(Random.Range(1, 9) + "");
@@ -13,14 +12,8 @@ public class bloodController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (parent != null)
-        {
-            transform.position = parent.transform.position;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+       
+        
 
     }
     void exit()
@@ -28,8 +21,5 @@ public class bloodController : MonoBehaviour
         Destroy(gameObject);
 
     }
-    public void setParent(GameObject parent)
-    {
-        this.parent = parent;
-    }
+
 }

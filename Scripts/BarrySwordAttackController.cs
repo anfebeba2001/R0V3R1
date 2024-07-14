@@ -37,7 +37,7 @@ public class BarrySwordAttackController : MonoBehaviour
         else{
             damage = (int)(parent.GetComponent<BarryController>().getPowerAttack() * 1.5f);
         }
-        if (coll.gameObject.tag == "Enemy" && parent.GetComponent<BarryController>().getAttacking() && attackCoolDown <= 0)
+        if ((coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Skeleton") && parent.GetComponent<BarryController>().getAttacking() && attackCoolDown <= 0)
         {
             coll.gameObject.SendMessage("Attacked", parent.GetComponent<BarryController>().getPowerAttack());
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.1f;

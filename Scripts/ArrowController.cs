@@ -37,7 +37,7 @@ public class ArrowController : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
-        if (coll.gameObject.tag != "Player" && coll.gameObject.tag == "Enemy")
+        if (coll.gameObject.tag != "Player" && (coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Skeleton"))
         {
             coll.gameObject.SendMessage("HittedByBow", damage);
             Destroy(gameObject);
