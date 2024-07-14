@@ -26,7 +26,7 @@ public class BarrySwordAttackController : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
-        if (coll.gameObject.tag == "Enemy" && parent.GetComponent<BarryController>().getAttacking() && attackCoolDown <= 0)
+        if ((coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Skeleton") && parent.GetComponent<BarryController>().getAttacking() && attackCoolDown <= 0)
         {
             coll.gameObject.SendMessage("Attacked", parent.GetComponent<BarryController>().getPowerAttack());
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.1f;
