@@ -26,6 +26,8 @@ public class NecroController : MonoBehaviour
     private float attackCoolDown;
     private bool resting;
     public Vector3[] possiblePositionFireRing = new Vector3[10];
+    private float infernoCoolDown;
+    private float meteoraCoolDown;
 
     void Start()
     {
@@ -40,7 +42,15 @@ public class NecroController : MonoBehaviour
     void Update()
     {
         taunted = GetComponentInParent<EnemyController>().getTaunted();
-        if(taunted && health > 0 && attackCoolDown <= 0)
+        if(taunted && infernoCoolDown <= 0)
+        {
+            inferno();
+        }
+        if(taunted && meteoraCoolDown <= 0)
+        {
+            meteoraAttack();
+        }
+        /*if(taunted && health > 0 && attackCoolDown <= 0)
         {
             playerDetected = GetComponentInParent<EnemyController>().getPlayerDetected();
             if(freeState)
@@ -94,24 +104,29 @@ public class NecroController : MonoBehaviour
         else if(resting)
         {
             GetComponent<Animator>().Play("NecroIddle");
-        }
+        }*/
 
         //Timer
     
-            if(attackCoolDown > 0)
-            {
-                freeState = false;
-                attackCoolDown -= Time.deltaTime;
-            }
-            else{
-                freeState = true;
-            }
+            
         
-   
+            if(infernoCoolDown > 0)
+            {
+                infernoCoolDown -= Time.deltaTime;
+            }
+            if(meteoraCoolDown > 0)
+            {
+                meteoraCoolDown -= Time.deltaTime;
+            }
+            if(meteoraCoolDown > 0 && infernoCoolDown > 0 || !taunted)
+            {
+                GetComponent<Animator>().Play("NecroIddle");
+            }
       
     }
     private void meteoraAttack()
     {
+        meteoraCoolDown = 7f;
         GetComponent<Animator>().Play("NecroMeteora");
         meteora.transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z);
         Instantiate(meteora);
@@ -137,7 +152,9 @@ public class NecroController : MonoBehaviour
 
     private void inferno()
     {
+        GetComponent<Animator>().Play("NecroInferno");
         fireRinge.transform.position = possiblePositionFireRing[Random.Range(0,10)];
+        infernoCoolDown = 70;
         Instantiate(fireRinge);
     }
 
