@@ -14,6 +14,7 @@ public class BarryController : MonoBehaviour
     private float jumpingForce = 2.5f;
     private int healingVials = 3;
     private int arrows = 10;
+    private int combo;
     private float freezeTimer;
     private bool groundTouched;
 
@@ -26,6 +27,7 @@ public class BarryController : MonoBehaviour
     private bool running;
     public bool readyToAttack;
     private float attackCoolDown = 0;
+    private float comboAttackTimer = 0;
     private float healingCoolDown;
     private float hurtCoolDown;
     private bool hurt;
@@ -69,6 +71,7 @@ public class BarryController : MonoBehaviour
         animator = GetComponent<Animator>();
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
         freeState = true;
+        combo = 0;
     }
 
 
@@ -102,6 +105,8 @@ public class BarryController : MonoBehaviour
             
             //Attacking
             Attack();
+            SecondAttack();
+            ThirdAttack();
 
             //BowAttack
             BowAttack();
@@ -171,6 +176,13 @@ public class BarryController : MonoBehaviour
         //Dash
         if(dashCoolDown >0){
             dashCoolDown -= Time.deltaTime;
+        }
+        //ResetCombo
+        if(comboAttackTimer >= 0){
+            comboAttackTimer += Time.deltaTime;
+        }
+        if(comboAttackTimer >= 0.8f){
+            combo = 0;
         }
     }
 
@@ -246,13 +258,61 @@ public class BarryController : MonoBehaviour
     }
 
     private void Attack(){
-        if ((Input.GetKey(KeyCode.X) || attackButtonValue > 0) && attackCoolDown <= 0 && stamina >= 30)
+
+
+        if (Input.GetKey(KeyCode.X) && combo == 0 && attackCoolDown <= 0)
+        {
+            animator.Play("BarryAttacks");
+            attackCoolDown = 0.9f;
+            attacking = true;
+            //stamina -= 30;
+            comboAttackTimer = 0;
+            combo++;
+        }
+
+
+
+        /*if ((Input.GetKey(KeyCode.X) || attackButtonValue > 0) && attackCoolDown <= 0 && stamina >= 30)
         {
             attackCoolDown = 0.9f;
             stamina -= 30;
             staminaCoolDown = Time.time;
             attacking = true;
             animator.Play("BarryAttacks");
+        }*/
+    }
+
+    private void SecondAttack(){
+        if (Input.GetKey(KeyCode.X) && combo == 1 && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        {
+            animator.Play("BarryAttack2");
+            comboAttackTimer = 0;
+            //stamina -= 30;
+            staminaCoolDown = Time.time;
+            attacking = true;
+            combo++;
+        }
+
+        /*if (Input.GetKey(KeyCode.X))
+        {
+            animator.Play("BarryAttack2");
+            comboAttackTimer = 0;
+            //stamina -= 30;
+            staminaCoolDown = Time.time;
+            attacking = true;
+            combo++;
+        }*/
+    }
+
+    private void ThirdAttack(){
+        if (Input.GetKey(KeyCode.X) && combo == 2 && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        {
+            animator.Play("BarryAttack3");
+            attackCoolDown = 0.9f;
+            //stamina -= 30;
+            staminaCoolDown = Time.time;
+            attacking = true;
+            combo = 0;
         }
     }
 
@@ -393,6 +453,10 @@ public class BarryController : MonoBehaviour
     public void finishDash(){
         isDashing = false;
         dashCoolDown = 0.5f;
+    }
+
+    public int getAttackState(){
+        return combo;
     }
 
 

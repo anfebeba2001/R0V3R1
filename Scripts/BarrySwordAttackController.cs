@@ -26,6 +26,17 @@ public class BarrySwordAttackController : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
+        Debug.Log("Hola");
+        int damage;
+        if(parent.GetComponent<BarryController>().getAttackState() == 0){
+            damage = (int)(parent.GetComponent<BarryController>().getPowerAttack() * 0.7f);
+        }
+        else if(parent.GetComponent<BarryController>().getAttackState() == 1){
+            damage = (int)parent.GetComponent<BarryController>().getPowerAttack();
+        }
+        else{
+            damage = (int)(parent.GetComponent<BarryController>().getPowerAttack() * 1.5f);
+        }
         if (coll.gameObject.tag == "Enemy" && parent.GetComponent<BarryController>().getAttacking() && attackCoolDown <= 0)
         {
             coll.gameObject.SendMessage("Attacked", parent.GetComponent<BarryController>().getPowerAttack());
