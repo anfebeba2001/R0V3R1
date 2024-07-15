@@ -28,7 +28,12 @@ public class NecroSkeletonController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        hitted = GetComponent<EnemyController>().getHitted();
+        if(hitted)
+        {
+            GetComponent<EnemyController>().cancelHitted();
+            Hitted(GetComponent<EnemyController>().getDamageReceived());
+        }
         if(health > 0)
         {
             if(!hitted)
@@ -60,8 +65,8 @@ public class NecroSkeletonController : MonoBehaviour
         skeletonWave.transform.position = transform.position;
         fixedScale = skeletonWave.transform.localScale;
         fixedPos = skeletonWave.transform.position;
-        fixedPos.y -= 0.4f;
-            
+        fixedPos.y -= 0.6f;
+        skeletonWave.transform.position = fixedPos;
             
         if(transform.localScale.x > 0)
         {

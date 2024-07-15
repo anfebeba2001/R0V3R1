@@ -15,9 +15,12 @@ public class EnemyController : MonoBehaviour
     private bool readyToBeAttacked;
     public GameObject damageMessagePopUp;
     public GameObject bloodFX;
+    private bool hitted;
+    private float damageReceived;
+
     void Start()
     {
-        
+        hitted = false;
         taunted = false;
     }
 
@@ -46,6 +49,24 @@ public class EnemyController : MonoBehaviour
               
 
         }
+        
+    }
+    public void cancelHitted()
+    {
+        hitted = false;
+    }
+    public bool getHitted()
+    {
+        return hitted;
+    }
+    public float getDamageReceived()
+    {
+        return damageReceived;
+    }
+    public void Hitted(float damage)
+    {
+        damageReceived = damage;
+        hitted = true;
     }
     public GameObject getDamageMessagePopUp()
     {
@@ -74,4 +95,5 @@ public class EnemyController : MonoBehaviour
     {
         this.playerDetected = playerDetected;
     }
+    
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class fireRingController : MonoBehaviour
 {
     private float damage = 50;
+    private bool isStopped;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +19,7 @@ public class fireRingController : MonoBehaviour
     }
     void OnTriggerExit2D(Collider2D coll)
     {
-        if (coll.gameObject.name == "Barry")
+        if (coll.gameObject.name == "Barry" && !isStopped)
         {
             coll.gameObject.SendMessage("BarryGotAttacked",damage);
         }
@@ -26,5 +27,9 @@ public class fireRingController : MonoBehaviour
     void destroy()
     {
         Destroy(gameObject);
+    }
+    void stopHurting()
+    {
+        isStopped = true;
     }
 }

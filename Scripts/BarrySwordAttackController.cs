@@ -42,7 +42,7 @@ public class BarrySwordAttackController : MonoBehaviour
         if ((coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Skeleton") && attackCoolDown <= 0)
         {
             Debug.Log("mamahuevo: " + parent.GetComponent<BarryController>().getAttackState());
-            coll.gameObject.GetComponent<DummyController>().Hitted(damage);
+            coll.gameObject.GetComponent<EnemyController>().Hitted(damage);
             //coll.gameObject.SendMessage("Attacked", damage);
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.1f;
             attackCoolDown = 0f;
