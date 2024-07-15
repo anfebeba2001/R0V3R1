@@ -15,11 +15,11 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(mainCamera.GetComponent<Camera>().orthographicSize < 1.8f)
+        if(mainCamera.GetComponent<Camera>().orthographicSize < 3.8f)
         {
             mainCamera.GetComponent<Camera>().orthographicSize += 0.0025f;
         }
-        if(mainCamera.GetComponent<Camera>().orthographicSize < 0.7f)
+        if(mainCamera.GetComponent<Camera>().orthographicSize < 2f)
         {
             mainCamera.GetComponent<Camera>().orthographicSize += 0.025f;
         }

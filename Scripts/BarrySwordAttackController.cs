@@ -26,22 +26,26 @@ public class BarrySwordAttackController : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
-        Debug.Log("Hola");
-        int damage;
-        if(parent.GetComponent<BarryController>().getAttackState() == 0){
+        
+        int damage = 0;
+        if(parent.GetComponent<BarryController>().getAttackState() == 1){
             damage = (int)(parent.GetComponent<BarryController>().getPowerAttack() * 0.7f);
         }
-        else if(parent.GetComponent<BarryController>().getAttackState() == 1){
+        else if(parent.GetComponent<BarryController>().getAttackState() == 2){
             damage = (int)parent.GetComponent<BarryController>().getPowerAttack();
         }
-        else{
-            damage = (int)(parent.GetComponent<BarryController>().getPowerAttack() * 1.5f);
+        else if(parent.GetComponent<BarryController>().getAttackState() == 3){
+            damage = 1000;
         }
-        if ((coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Skeleton") && parent.GetComponent<BarryController>().getAttacking() && attackCoolDown <= 0)
+        
+        
+        if ((coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Skeleton") && attackCoolDown <= 0)
         {
-            coll.gameObject.SendMessage("Attacked", parent.GetComponent<BarryController>().getPowerAttack());
+            Debug.Log("mamahuevo: " + parent.GetComponent<BarryController>().getAttackState());
+            coll.gameObject.GetComponent<DummyController>().Hitted(damage);
+            //coll.gameObject.SendMessage("Attacked", damage);
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.1f;
-            attackCoolDown = 0.7f;
+            attackCoolDown = 0f;
         }
 
     }

@@ -15,7 +15,7 @@ public class NecroSkeletonController : MonoBehaviour
     private bool hitted;
     private GameObject blood;
     private GameObject damageMessagePopUp;
-    private float hittedCoolDown;
+
 
     void Start()
     {
@@ -28,10 +28,7 @@ public class NecroSkeletonController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(hittedCoolDown > 0)
-        {
-            hittedCoolDown -= Time.deltaTime;
-        }
+
         if(health > 0)
         {
             if(!hitted)
@@ -93,8 +90,7 @@ public class NecroSkeletonController : MonoBehaviour
     }
     void Hitted(float damage)
     {
-        if(hittedCoolDown <= 0){
-        hittedCoolDown = 0.5F;
+        
         health -= damage;
         hitted = true;
         damageMessagePopUp.GetComponent<TextMeshPro>().text = (damage) + " ";
@@ -103,7 +99,7 @@ public class NecroSkeletonController : MonoBehaviour
         Instantiate(blood, transform.position + new Vector3(0, 0f, 0), Quaternion.identity);
         GetComponent<Rigidbody2D>().AddForce(Vector2.right, ForceMode2D.Impulse);
         GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
-        }
+        
     }
     void finishHitted()
     {

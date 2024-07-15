@@ -10,11 +10,13 @@ using UnityEngine.InputSystem;
 public class BarryController : MonoBehaviour
 {
     private float speed = 5.0f;
-    private float powerAttack = 20;
+    private float powerAttack = 10;
     private float jumpingForce = 2.5f;
     private int healingVials = 3;
     private int arrows = 10;
-    private int combo;
+    private bool firstAttack;
+    private bool secondAttack;
+    private bool thirdAttack;
     private float freezeTimer;
     private bool groundTouched;
 
@@ -71,7 +73,6 @@ public class BarryController : MonoBehaviour
         animator = GetComponent<Animator>();
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
         freeState = true;
-        combo = 0;
     }
 
 
@@ -104,7 +105,7 @@ public class BarryController : MonoBehaviour
             Dash();
             
             //Attacking
-            Attack();
+            FirstAttack();
             SecondAttack();
             ThirdAttack();
 
@@ -182,7 +183,9 @@ public class BarryController : MonoBehaviour
             comboAttackTimer += Time.deltaTime;
         }
         if(comboAttackTimer >= 0.8f){
-            combo = 0;
+            firstAttack = false;
+            secondAttack = false;
+            thirdAttack = false;
         }
     }
 
@@ -257,62 +260,43 @@ public class BarryController : MonoBehaviour
         }
     }
 
-    private void Attack(){
+    private void FirstAttack(){
 
 
-        if (Input.GetKey(KeyCode.X) && combo == 0 && attackCoolDown <= 0)
+        if (Input.GetKey(KeyCode.X) && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
         {
             animator.Play("BarryAttacks");
             attackCoolDown = 0.9f;
             attacking = true;
+            firstAttack = true;
             //stamina -= 30;
             comboAttackTimer = 0;
-            combo++;
         }
-
-
-
-        /*if ((Input.GetKey(KeyCode.X) || attackButtonValue > 0) && attackCoolDown <= 0 && stamina >= 30)
-        {
-            attackCoolDown = 0.9f;
-            stamina -= 30;
-            staminaCoolDown = Time.time;
-            attacking = true;
-            animator.Play("BarryAttacks");
-        }*/
     }
 
     private void SecondAttack(){
-        if (Input.GetKey(KeyCode.X) && combo == 1 && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        if (Input.GetKey(KeyCode.X) && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
         {
             animator.Play("BarryAttack2");
             comboAttackTimer = 0;
             //stamina -= 30;
+            firstAttack = false;
+            secondAttack = true;
             staminaCoolDown = Time.time;
             attacking = true;
-            combo++;
         }
-
-        /*if (Input.GetKey(KeyCode.X))
-        {
-            animator.Play("BarryAttack2");
-            comboAttackTimer = 0;
-            //stamina -= 30;
-            staminaCoolDown = Time.time;
-            attacking = true;
-            combo++;
-        }*/
     }
 
     private void ThirdAttack(){
-        if (Input.GetKey(KeyCode.X) && combo == 2 && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        if (Input.GetKey(KeyCode.X) && !firstAttack && secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
         {
             animator.Play("BarryAttack3");
             attackCoolDown = 0.9f;
             //stamina -= 30;
+            secondAttack = false;
+            thirdAttack = true;
             staminaCoolDown = Time.time;
             attacking = true;
-            combo = 0;
         }
     }
 
@@ -426,10 +410,7 @@ public class BarryController : MonoBehaviour
         arrow.GetComponent<ArrowController>().setDamage(damageOnBow);
         isBowing = false;
     }
-    void endingAttack()
-    {
-        attacking = false;
-    }
+
 
     void endingHEaling()
     {
@@ -456,11 +437,15 @@ public class BarryController : MonoBehaviour
     }
 
     public int getAttackState(){
-        return combo;
+        if(firstAttack){
+            return 1;
+        }
+        else if(secondAttack){
+            return 2;
+        }
+        else{
+            return 3;
+        }
     }
-
-
-
-
 
 }

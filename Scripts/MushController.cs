@@ -103,7 +103,7 @@ public class MushController : MonoBehaviour
         }
 
 
-        taunted = GetComponentInParent<EnemyController>().getTaunted();
+        //taunted = GetComponentInParent<EnemyController>().getTaunted();
         if (!taunted && !escaping && health > 0)
         {
             GetComponent<Animator>().Play("MushIdle");
