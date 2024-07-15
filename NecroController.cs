@@ -128,6 +128,10 @@ public class NecroController : MonoBehaviour
 
     private void Hitted(float damage)
     {
+        if(invincibleCoolDown <=  0)
+        {
+
+       
         health -= damage;
         hitted = true;
         damageMessagePopUp.GetComponent<TextMeshPro>().text = (damage) + " ";
@@ -137,6 +141,12 @@ public class NecroController : MonoBehaviour
         GetComponent<Rigidbody2D>().AddForce(Vector2.right, ForceMode2D.Impulse);
         GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
         invincibleCoolDown = 100;
+         }
+         else{
+
+        damageMessagePopUp.GetComponent<TextMeshPro>().text =  " Blocked!!";
+        Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+         }
     }
 
     private void meteoraAttack()
@@ -192,6 +202,11 @@ public class NecroController : MonoBehaviour
         if(health < maxHealth-(maxHealth/4))
         {
             health += maxHealth/4;
+
+
+        damageMessagePopUp.GetComponent<TextMeshPro>().text = "+" + maxHealth/4;
+
+        Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
         }
         healingCoolDown = 80;
     }
