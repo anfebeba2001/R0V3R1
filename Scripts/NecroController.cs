@@ -121,23 +121,29 @@ public class NecroController : MonoBehaviour
 
             if(invincibleCoolDown > 0)
             {
+                Debug.Log(invincibleCoolDown);
                 shield.SetActive(true);
                 invincibleCoolDown -= Time.deltaTime;
             }
             else
             {
                 shield.SetActive(false);
-            }
-
-
-            if(hittedCoolDown > 0 && invincibleCoolDown <= 0)
-            {
+                if(hittedCoolDown > 0)
+                {
                 hittedCoolDown -= Time.deltaTime;
+                }
+                else
+                {
+                    invincibleCoolDown = 30;
+                }
+            
             }
-            else
-            {
-                invincibleCoolDown = 30f;
-            }
+
+
+ 
+    
+            
+
 
             if(invokingMeteora)
             {
@@ -248,7 +254,7 @@ public class NecroController : MonoBehaviour
     private void summon()
     {
         GetComponent<Animator>().Play("NecroInvoke");
-        summonCoolDown = 7f;
+        summonCoolDown = 14f;
         SkeletonSoldier.transform.position = new Vector3(transform.position.x+(Random.Range(-6,6)),transform.position.y+7,transform.position.z);
         if(SkeletonSoldier.transform.position.x > transform.position.x )
         {
