@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 
 public class BarryController : MonoBehaviour
 {
-    private float speed = 5.0f;
+    private float speed = 10f;
     private float powerAttack = 10;
     private float jumpingForce = 2.5f;
     private int healingVials = 3;
@@ -199,8 +199,35 @@ public class BarryController : MonoBehaviour
     }
 
     private void Run(){
-        
-        horizontal = Input.GetAxisRaw("Horizontal");
+
+
+        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && rigidbody2D.velocity.x > -2.5)
+        {
+            rigidbody2D.AddForce(Vector2.left * speed, ForceMode2D.Force);
+            transform.localScale = new Vector3(-2, 2, 1);
+            if(rigidbody2D.velocity.x < -0.3f){
+                animator.SetBool("Running", true);
+            }
+            
+
+        }
+        else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && rigidbody2D.velocity.x < 2.5)
+        {
+            rigidbody2D.AddForce(Vector2.right * speed, ForceMode2D.Force);
+            transform.localScale = new Vector3(2, 2, 1);
+            if(rigidbody2D.velocity.x > 0.3f){
+                animator.SetBool("Running", true);
+            }
+
+        }
+        else
+        {
+            animator.SetBool("Running", false);
+        }
+
+
+
+        /*horizontal = Input.GetAxisRaw("Horizontal");
 
         if (horizontal < 0 || moveDirection.x < 0)
         {
@@ -221,7 +248,7 @@ public class BarryController : MonoBehaviour
         }
         else{
             animator.SetBool("Running", false);
-        }
+        }*/
     }
 
     private void Jump(){
