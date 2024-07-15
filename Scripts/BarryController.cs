@@ -9,8 +9,8 @@ using UnityEngine.InputSystem;
 
 public class BarryController : MonoBehaviour
 {
-    private float speed = 10f;
-    private float powerAttack = 10;
+    public float speed;
+    private float powerAttack = 25;
     private float jumpingForce = 2.5f;
     private int healingVials = 3;
     private int arrows = 10;
@@ -25,9 +25,9 @@ public class BarryController : MonoBehaviour
     private CapsuleCollider2D capsuleCollider2D;
     private bool grounded;
     private bool frozen;
-    public bool attacking;
+    private bool attacking;
     private bool running;
-    public bool readyToAttack;
+    private bool readyToAttack;
     private float attackCoolDown = 0;
     private float comboAttackTimer = 0;
     private float healingCoolDown;
@@ -48,13 +48,14 @@ public class BarryController : MonoBehaviour
     private bool isBowing;
     private bool isDashing;
     private bool freeState;
-
+    
+    public float maxSpeed;
     private float horizontal;
 
     private UnityEngine.Vector2 moveDirection;
     private float jumpButtonValue;
     private float healthButtonValue;
-    public float attackButtonValue;
+    private float attackButtonValue;
     private float bowButtonValue;
     [SerializeField] private InputActionReference moveActionToUse;
     [SerializeField] private InputActionReference jumpActionToUse;
@@ -201,7 +202,7 @@ public class BarryController : MonoBehaviour
     private void Run(){
 
 
-        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && rigidbody2D.velocity.x > -2.5)
+        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && rigidbody2D.velocity.x > -maxSpeed)
         {
             rigidbody2D.AddForce(Vector2.left * speed, ForceMode2D.Force);
             transform.localScale = new Vector3(-2, 2, 1);
@@ -211,7 +212,7 @@ public class BarryController : MonoBehaviour
             
 
         }
-        else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && rigidbody2D.velocity.x < 2.5)
+        else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && rigidbody2D.velocity.x <maxSpeed)
         {
             rigidbody2D.AddForce(Vector2.right * speed, ForceMode2D.Force);
             transform.localScale = new Vector3(2, 2, 1);

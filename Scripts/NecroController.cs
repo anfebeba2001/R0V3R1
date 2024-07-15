@@ -12,6 +12,7 @@ public class NecroController : MonoBehaviour
     private float normalRadius = 5f;
     private float tauntedRadius = 5f;
     private float invincibleCoolDown;
+    private bool isBeingHitted;
     private bool invincible;
     public GameObject shield;
 
@@ -42,8 +43,8 @@ public class NecroController : MonoBehaviour
     void Start()
     {
         resting = true;
-        invincibleCoolDown = 30;
-        maxHealth = 1;
+        invincibleCoolDown = 5;
+        maxHealth = 100;
         health = maxHealth;
         blood = GetComponent<EnemyController>().getBlood();
         damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
@@ -121,20 +122,24 @@ public class NecroController : MonoBehaviour
 
             if(invincibleCoolDown > 0)
             {
-                Debug.Log(invincibleCoolDown);
                 shield.SetActive(true);
+                isBeingHitted = false;
                 invincibleCoolDown -= Time.deltaTime;
             }
             else
             {
                 shield.SetActive(false);
+                if(isBeingHitted)
+                {               
                 if(hittedCoolDown > 0)
                 {
-                hittedCoolDown -= Time.deltaTime;
+                    hittedCoolDown -= Time.deltaTime;
                 }
                 else
                 {
-                    invincibleCoolDown = 30;
+                    invincibleCoolDown = 5;
+                    isBeingHitted = false;
+                }
                 }
             
             }
@@ -201,7 +206,7 @@ public class NecroController : MonoBehaviour
 
     private void Hitted(float damage)
     {
-        
+        isBeingHitted = true;
         if(invincibleCoolDown <=  0)
         {
         if(hittedCoolDown <= 0)
@@ -216,7 +221,6 @@ public class NecroController : MonoBehaviour
         Instantiate(blood, transform.position + new Vector3(0, 0f, 0), Quaternion.identity);
         GetComponent<Rigidbody2D>().AddForce(Vector2.right, ForceMode2D.Impulse);
         GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
-        invincibleCoolDown = 30;
          }
          else{
 

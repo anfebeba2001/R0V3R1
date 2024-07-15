@@ -35,7 +35,7 @@ public class BarrySwordAttackController : MonoBehaviour
             damage = (int)parent.GetComponent<BarryController>().getPowerAttack();
         }
         else if(parent.GetComponent<BarryController>().getAttackState() == 3){
-            damage = 1000;
+            damage = (int)(parent.GetComponent<BarryController>().getPowerAttack() * 1.5f);
         }
         
         

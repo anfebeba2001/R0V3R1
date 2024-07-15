@@ -20168,6 +20168,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Barry
       objectReference: {fileID: 0}
+    - target: {fileID: 4295405098093076773, guid: 42fd8af663c8bd94d9ae3089a6e5e02d, type: 3}
+      propertyPath: speed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4295405098093076773, guid: 42fd8af663c8bd94d9ae3089a6e5e02d, type: 3}
+      propertyPath: maxSpeed
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5007219636398204147, guid: 42fd8af663c8bd94d9ae3089a6e5e02d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.25
@@ -26215,7 +26223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 257159535007353500, guid: 300ef1ba4ac01974cb1ee436e90d750a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 9.65
+      value: 9.83
       objectReference: {fileID: 0}
     - target: {fileID: 257159535007353500, guid: 300ef1ba4ac01974cb1ee436e90d750a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -26252,6 +26260,34 @@ PrefabInstance:
     - target: {fileID: 260579742010509458, guid: 300ef1ba4ac01974cb1ee436e90d750a, type: 3}
       propertyPath: m_Name
       value: Necro
+      objectReference: {fileID: 0}
+    - target: {fileID: 260579742010509458, guid: 300ef1ba4ac01974cb1ee436e90d750a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7461678745570021354, guid: 300ef1ba4ac01974cb1ee436e90d750a, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 12.635944
+      objectReference: {fileID: 0}
+    - target: {fileID: 7461678745570021354, guid: 300ef1ba4ac01974cb1ee436e90d750a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 20.149206
+      objectReference: {fileID: 0}
+    - target: {fileID: 7579907322982198779, guid: 300ef1ba4ac01974cb1ee436e90d750a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5c14927bbc3913e41a28fc4bf3dcee66, type: 3}
+    - target: {fileID: 7579907322982198779, guid: 300ef1ba4ac01974cb1ee436e90d750a, type: 3}
+      propertyPath: m_Color.b
+      value: 0.28757393
+      objectReference: {fileID: 0}
+    - target: {fileID: 7579907322982198779, guid: 300ef1ba4ac01974cb1ee436e90d750a, type: 3}
+      propertyPath: m_Color.g
+      value: 0.110466346
+      objectReference: {fileID: 0}
+    - target: {fileID: 7579907322982198779, guid: 300ef1ba4ac01974cb1ee436e90d750a, type: 3}
+      propertyPath: m_Color.r
+      value: 0.5471698
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
