@@ -254,7 +254,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2403433865211717892}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.0719523, z: -0, w: 0.9974081}
+  m_LocalRotation: {x: 0, y: -0.07195004, z: 0, w: 0.9974083}
   m_LocalPosition: {x: -3.41, y: -0.33, z: 0}
   m_LocalScale: {x: 2, y: 2, z: -1}
   m_ConstrainProportionsScale: 0
@@ -366,7 +366,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 1.5
+  m_LinearDrag: 2.3
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
@@ -392,11 +392,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b2fb7b8c87e70145b62ec40ce0921ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attacking: 0
-  readyToAttack: 0
+  speed: 20
   damageMessagePopUp: {fileID: 2574931633462917792, guid: c058d2f08b9c7da4ea121283b39d3fc0, type: 3}
   arrowPrefab: {fileID: 8677834792987813017, guid: c44b4fb36ee2cb44fa53f3e007e6ad9a, type: 3}
-  attackButtonValue: 0
+  maxSpeed: 8
   moveActionToUse: {fileID: 5788472268530232851, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
   jumpActionToUse: {fileID: -2431413364244891814, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
   attackActionToUse: {fileID: 2030834687466303880, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}

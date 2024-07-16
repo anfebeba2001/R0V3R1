@@ -11,7 +11,7 @@ public class BarryController : MonoBehaviour
 {
     public float speed;
     private float powerAttack = 25;
-    private float jumpingForce = 2.5f;
+    public float jumpingForce = 2.5f;
     private int healingVials = 3;
     private int arrows = 10;
     private bool firstAttack;
@@ -221,7 +221,7 @@ public class BarryController : MonoBehaviour
             }
 
         }
-        else
+        else if(!(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)))
         {
             animator.SetBool("Running", false);
         }
