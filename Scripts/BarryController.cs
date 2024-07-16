@@ -381,7 +381,7 @@ public class BarryController : MonoBehaviour
     {
         freezeTimer = time;
     }
-    void BarryGotAttacked(float damage)
+    public void BarryGotAttacked(float damage)
     {
         if (!hurt && hurtCoolDown <= 0)
         {
@@ -402,7 +402,7 @@ public class BarryController : MonoBehaviour
         }
 
     }
-    void microDamage(float damage)
+    public void microDamage(float damage)
     {
         if (!hurt)
         {
