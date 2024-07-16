@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviour
     private float attackedCoolDown;
     private bool readyToBeAttacked;
     public GameObject damageMessagePopUp;
+    public GameObject tears;
     public GameObject bloodFX;
     private bool hitted;
     private float damageReceived;

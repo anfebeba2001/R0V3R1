@@ -5,6 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - damageMessagePopUp: {fileID: 2574931633462917792, guid: c78ae74efc45bc74da4f672e74077fd2, type: 3}
+  - tears: {fileID: 3589435810816777824, guid: 8a647ffcdc28ce54c9c347a1b973fd0b, type: 3}
   - bloodFX: {fileID: 4662880452902826034, guid: 097e7be5c6b00d84e8ca38fe8e4cea80, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}

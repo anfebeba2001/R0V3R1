@@ -19,6 +19,7 @@ public class BarryController : MonoBehaviour
     private bool thirdAttack;
     private float freezeTimer;
     private bool groundTouched;
+    private int currentTears;
 
     private new Rigidbody2D rigidbody2D;
     private Animator animator;
@@ -476,4 +477,12 @@ public class BarryController : MonoBehaviour
         }
     }
 
+    public void addTears(int tearsIncoming)
+    {
+        currentTears += tearsIncoming;
+    }
+    public int getCurrentTears()
+    {
+        return currentTears;
+    }
 }
