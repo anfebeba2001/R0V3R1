@@ -82,8 +82,8 @@ public class NecroSkeletonController : MonoBehaviour
         
     }
     void Death(){
-      health = 0; 
-      damageMessagePopUp.GetComponent<TextMeshPro>().text =  "CRITICAL!! ";
+        health = 0; 
+        damageMessagePopUp.GetComponent<TextMeshPro>().text =  "CRITICAL!! ";
         Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
         Instantiate(blood, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
         GetComponent<Rigidbody2D>().AddForce(Vector2.right, ForceMode2D.Impulse);
