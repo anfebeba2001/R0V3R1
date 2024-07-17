@@ -1,14 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
+
 //using System.Numerics;
 using TMPro;
-using UnityEditor.VersionControl;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class BarryController : MonoBehaviour
 {
+    public GameObject leftButton;
+    public GameObject rightButton;
     public float speed;
     private float powerAttack = 25;
     public float jumpingForce = 2.5f;
@@ -22,7 +29,7 @@ public class BarryController : MonoBehaviour
     private bool groundTouched;
     private int currentTears;
 
-    private new Rigidbody2D rigidbody2D;
+    private Rigidbody2D rigidbody2D;
     private Animator animator;
     private CapsuleCollider2D capsuleCollider2D;
     private bool grounded;
@@ -57,14 +64,21 @@ public class BarryController : MonoBehaviour
     private float healthButtonValue;
     private float attackButtonValue;
     private float bowButtonValue;
+    private UnityEngine.Vector3[] originalButtonPosition = new UnityEngine.Vector3[2];
     [SerializeField] private InputActionReference moveActionToUse;
     [SerializeField] private InputActionReference jumpActionToUse;
     [SerializeField] private InputActionReference attackActionToUse;
     [SerializeField] private InputActionReference bowActionToUse;
     [SerializeField] private InputActionReference healthActionToUse;
 
+    private bool laddering;
+    private float ladderingCoolDown;
+
     void Start()
     {
+        
+        originalButtonPosition[0] = rightButton.transform.position;
+        originalButtonPosition[1] = leftButton.transform.position;
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         maxHealth = 1000;
         maxStamina = 100;
@@ -116,9 +130,15 @@ public class BarryController : MonoBehaviour
             //Healing
             Healing();
         }
+
+
+        if(laddering)
+        {
+            ladderingAction();
+        }
         
 
-        if (frozen || hurt || health<=0 || isBowing || isDashing)
+        if (frozen || hurt || health<=0 || isBowing || isDashing || laddering)
         {
             freeState =  false;
         }
@@ -127,6 +147,10 @@ public class BarryController : MonoBehaviour
         }
 
 
+        if(ladderingCoolDown > 0)
+        {
+            ladderingCoolDown -= Time.deltaTime;
+        }
         //Timers
         //  //Attack
         if (attackCoolDown > 0)
@@ -190,6 +214,59 @@ public class BarryController : MonoBehaviour
         }
     }
 
+    private void ladderingAction()
+    {
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.UpArrow) || moveDirection.x > 0)
+        {
+            GetComponent<Animator>().Play("BarryLadderingMove");
+            transform.position += new Vector3(0,1,0)*0.05f;
+        }
+        else if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.DownArrow) || moveDirection.x < 0)
+        {
+            GetComponent<Animator>().Play("BarryLadderingMove");
+            transform.position += new Vector3(0,-1,0)*0.05f;
+        }
+        else 
+        {
+            GetComponent<Animator>().Play("BarryLadderingStay");
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D col)
+    {
+        if(col.gameObject.tag == "Ladder")
+        {
+            if((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || jumpButtonValue == 1) && !laddering && !hurt && ladderingCoolDown <= 0)
+            {
+                if(transform.position.x > col.gameObject.transform.position.x )
+                    transform.localScale = new Vector3(-2, 2, 1);
+                else
+                    transform.localScale = new Vector3(2, 2, 1);
+                laddering = true;
+                GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);    
+                GetComponent<Rigidbody2D>().isKinematic = true;      
+                rightButton.transform.position = leftButton.transform.position;
+                rightButton.transform.position += new Vector3(0,1,0)*270;
+                rightButton.transform.rotation = new quaternion(0, 0, 180 , 0);
+                leftButton.transform.rotation = new quaternion(0, 0, 0 , 0);
+            }
+        }
+    }
+    void OnTriggerExit2D(Collider2D col)
+    {
+        if(col.gameObject.tag == "Ladder")
+        {
+            laddering = false;
+            rightButton.transform.rotation = quaternion.Euler(0,0,-67.5f);
+            leftButton.transform.rotation = quaternion.Euler(0,0,67.5f);
+            rightButton.transform.position = originalButtonPosition[0];
+            leftButton.transform.position = originalButtonPosition[1];
+            GetComponent<Animator>().Play("BarryRuns");
+            if(GetComponent<Rigidbody2D>().isKinematic)
+                GetComponent<Rigidbody2D>().isKinematic = false;
+
+        }
+    }
     private void Healing(){
         if (healingCoolDown <= 0 && healingVials >= 1 && health<maxHealth && (healthButtonValue > 0 || Input.GetKey(KeyCode.F)))
         {
@@ -202,16 +279,16 @@ public class BarryController : MonoBehaviour
     private void Run(){
 
 
-        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && rigidbody2D.velocity.x > -maxSpeed)
+        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || moveDirection.x < 0) && rigidbody2D.velocity.x > -maxSpeed)
         {
-            rigidbody2D.AddForce(Vector2.left * speed, ForceMode2D.Force);
+            rigidbody2D.AddForce(UnityEngine.Vector2.left * speed, ForceMode2D.Force);
             transform.localScale = new Vector3(-2, 2, 1);
             if(rigidbody2D.velocity.x < -0.3f){
                 animator.SetBool("Running", true);
             }
             
         }
-        else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && rigidbody2D.velocity.x <maxSpeed)
+        else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) || moveDirection.x > 0) && rigidbody2D.velocity.x <maxSpeed)
         {
             rigidbody2D.AddForce(Vector2.right * speed, ForceMode2D.Force);
             transform.localScale = new Vector3(2, 2, 1);
@@ -371,9 +448,6 @@ public class BarryController : MonoBehaviour
             grounded = false;
 
     }
-
-
-
     void freeze(float time)
     {
         freezeTimer = time;
@@ -435,8 +509,6 @@ public class BarryController : MonoBehaviour
         arrow.GetComponent<ArrowController>().setDamage(damageOnBow);
         isBowing = false;
     }
-
-
     void endingHEaling()
     {
 
