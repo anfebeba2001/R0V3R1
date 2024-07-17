@@ -306,7 +306,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: b2db806a270e7b04dba0dc22c4103e01, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -366,7 +366,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 2.3
+  m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
@@ -392,10 +392,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b2fb7b8c87e70145b62ec40ce0921ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leftButton: {fileID: 0}
+  rightButton: {fileID: 0}
   speed: 20
+  jumpingForce: 2.5
   damageMessagePopUp: {fileID: 2574931633462917792, guid: c058d2f08b9c7da4ea121283b39d3fc0, type: 3}
   arrowPrefab: {fileID: 8677834792987813017, guid: c44b4fb36ee2cb44fa53f3e007e6ad9a, type: 3}
-  maxSpeed: 8
+  maxSpeed: 5
   moveActionToUse: {fileID: 5788472268530232851, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
   jumpActionToUse: {fileID: -2431413364244891814, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
   attackActionToUse: {fileID: 2030834687466303880, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
@@ -536,7 +539,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 4
   m_Sprite: {fileID: 372151825, guid: 2617119e1c6c3c74fb4de9e860379637, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
