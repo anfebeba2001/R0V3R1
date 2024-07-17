@@ -393,6 +393,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 20
+  jumpingForce: 2.5
   damageMessagePopUp: {fileID: 2574931633462917792, guid: c058d2f08b9c7da4ea121283b39d3fc0, type: 3}
   arrowPrefab: {fileID: 8677834792987813017, guid: c44b4fb36ee2cb44fa53f3e007e6ad9a, type: 3}
   maxSpeed: 8

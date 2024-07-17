@@ -30,8 +30,9 @@ public class FireBallScript : MonoBehaviour
         playerPositionFixed.z = -20;
         transform.position = playerPositionFixed;*/
 
+        Chasing();
         if(chasing){
-            Chasing();
+            
         }
         else{
 

@@ -14,6 +14,7 @@ public class BarryController : MonoBehaviour
     public float jumpingForce = 2.5f;
     private int healingVials = 3;
     private int arrows = 10;
+    public float dashForce;
     private bool firstAttack;
     private bool secondAttack;
     private bool thirdAttack;
@@ -42,14 +43,12 @@ public class BarryController : MonoBehaviour
     public GameObject arrowPrefab;
     private GameObject mainCamera;
     private float damageOnBow = 10;
-
     private float bowCoolDown = 3;
     private float dashCoolDown;
     private float staminaCoolDown;
     private bool isBowing;
     private bool isDashing;
     private bool freeState;
-    
     public float maxSpeed;
     private float horizontal;
 
@@ -211,7 +210,6 @@ public class BarryController : MonoBehaviour
                 animator.SetBool("Running", true);
             }
             
-
         }
         else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && rigidbody2D.velocity.x <maxSpeed)
         {
@@ -225,6 +223,7 @@ public class BarryController : MonoBehaviour
         else if(!(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)))
         {
             animator.SetBool("Running", false);
+            rigidbody2D.velocity = new Vector2(0, rigidbody2D.velocity.y);
         }
 
 
@@ -259,34 +258,30 @@ public class BarryController : MonoBehaviour
         {
             rigidbody2D.AddForce(Vector2.up * jumpingForce * 2, ForceMode2D.Impulse);
             animator.SetBool("Jumping", true);
-            animator.Play("BarryJumps");
+            //animator.Play("BarryJumps");
         }
     }
 
     private void Dash(){
         if (Input.GetKey(KeyCode.C) && dashCoolDown <= 0 && !isDashing && groundTouched)
         {
-            float dashForce = 0;
-            if(rigidbody2D.velocity.y > 0){
-                dashForce = 1.5f;
-            }
-            else if (rigidbody2D.velocity.y < 0){
-                dashForce = 4.5f;
-            }
-            else{
-                dashForce = 4f;
-            }
-            
             if(transform.localScale.x > 0){
-                rigidbody2D.AddForce(new Vector2(1.5f * 2.5f, 1.5f * dashForce), ForceMode2D.Impulse);
+                rigidbody2D.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
             }
             else{
-                rigidbody2D.AddForce(new Vector2(-1.5f * 2.5f, 1.5f * dashForce), ForceMode2D.Impulse);
+                rigidbody2D.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
             }
             isDashing = true;
             groundTouched = false;
             animator.Play("BarryDash");
+            rigidbody2D.isKinematic = true;
         }
+    }
+    public void EndDash(){
+        rigidbody2D.isKinematic = false;
+        rigidbody2D.velocity = new Vector2(0, rigidbody2D.velocity.y);
+        isDashing = false;
+        dashCoolDown = 0.5f;
     }
 
     private void FirstAttack(){
@@ -361,12 +356,13 @@ public class BarryController : MonoBehaviour
     {
         if (coll.gameObject.tag == "Ground")
         {
-
             groundTouched = true;
 
             grounded = true;
-
-            animator.SetBool("Jumping", false);
+            if(rigidbody2D.velocity.y <= 0){
+                animator.SetBool("Jumping", false);
+            }
+            
         }
     }
     void OnCollisionExit2D(Collision2D coll)
@@ -460,10 +456,7 @@ public class BarryController : MonoBehaviour
         return maxStamina;
     }
     
-    public void finishDash(){
-        isDashing = false;
-        dashCoolDown = 0.5f;
-    }
+    
 
     public int getAttackState(){
         if(firstAttack){

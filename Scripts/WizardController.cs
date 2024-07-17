@@ -28,13 +28,7 @@ public class WizardController : MonoBehaviour
     void Update()
     {
 
-        Vector3 direction = player.transform.position - transform.position;
-        if(direction.x >= 0){
-            transform.localScale = new Vector3(1.5f,1.5f,1.5f);
-        }
-        else{
-            transform.localScale = new Vector3(-1.5f,1.5f,1.5f);
-        }
+        
         float distanceX = Mathf.Abs(player.transform.position.x - transform.position.x);
         float distanceY = Mathf.Abs(player.transform.position.y - transform.position.y);
 
@@ -56,6 +50,16 @@ public class WizardController : MonoBehaviour
         else
         {
             animator.SetTrigger("Dead");
+        }
+    }
+
+    public void Tracking(){
+        Vector3 direction = player.transform.position - transform.position;
+        if(direction.x >= 0){
+            transform.localScale = new Vector3(1.5f,1.5f,1.5f);
+        }
+        else{
+            transform.localScale = new Vector3(-1.5f,1.5f,1.5f);
         }
     }
 
