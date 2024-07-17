@@ -57,14 +57,16 @@ public class BarryController : MonoBehaviour
     private bool isDashing;
     private bool freeState;
     public float maxSpeed;
-    private float horizontal;
+    private float dashVelocity = 6.0f;
+    public float dashTime = 0.4f;
+    private float initialGravity;
 
-    private UnityEngine.Vector2 moveDirection;
+    private Vector2 moveDirection;
     private float jumpButtonValue;
     private float healthButtonValue;
     private float attackButtonValue;
     private float bowButtonValue;
-    private UnityEngine.Vector3[] originalButtonPosition = new UnityEngine.Vector3[2];
+    private Vector3[] originalButtonPosition = new Vector3[2];
     [SerializeField] private InputActionReference moveActionToUse;
     [SerializeField] private InputActionReference jumpActionToUse;
     [SerializeField] private InputActionReference attackActionToUse;
@@ -89,6 +91,8 @@ public class BarryController : MonoBehaviour
         animator = GetComponent<Animator>();
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
         freeState = true;
+
+        initialGravity = rigidbody2D.gravityScale;
     }
 
 
@@ -105,9 +109,15 @@ public class BarryController : MonoBehaviour
         attackButtonValue = attackActionToUse.action.ReadValue<float>();
         bowButtonValue = bowActionToUse.action.ReadValue<float>();
         healthButtonValue = healthActionToUse.action.ReadValue<float>();
-        //Movement
-        //  //Running
 
+
+        if (frozen || hurt || health<=0 || isBowing || isDashing || laddering)
+        {
+            freeState =  false;
+        }
+        else{
+            freeState = true;
+        }
 
         if(freeState){
 
@@ -118,7 +128,9 @@ public class BarryController : MonoBehaviour
             Jump();
 
             //Dash
-            Dash();
+            if(Input.GetKey(KeyCode.C) && dashCoolDown <= 0 && !isDashing && groundTouched){
+                StartCoroutine(Dash());
+            }
             
             //Attacking
             FirstAttack();
@@ -139,13 +151,7 @@ public class BarryController : MonoBehaviour
         }
         
 
-        if (frozen || hurt || health<=0 || isBowing || isDashing || laddering)
-        {
-            freeState =  false;
-        }
-        else{
-            freeState = true;
-        }
+        
 
 
         if(ladderingCoolDown > 0)
@@ -282,7 +288,7 @@ public class BarryController : MonoBehaviour
 
         if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || moveDirection.x < 0) && rigidbody2D.velocity.x > -maxSpeed)
         {
-            rigidbody2D.AddForce(UnityEngine.Vector2.left * speed, ForceMode2D.Force);
+            rigidbody2D.AddForce(Vector2.left * speed, ForceMode2D.Force);
             transform.localScale = new Vector3(-2, 2, 1);
             if(rigidbody2D.velocity.x < -0.3f){
                 animator.SetBool("Running", true);
@@ -303,31 +309,6 @@ public class BarryController : MonoBehaviour
             animator.SetBool("Running", false);
             rigidbody2D.velocity = new Vector2(0, rigidbody2D.velocity.y);
         }
-
-
-
-        /*horizontal = Input.GetAxisRaw("Horizontal");
-
-        if (horizontal < 0 || moveDirection.x < 0)
-        {
-            transform.localScale = new Vector3(-2, 2, 1);
-        }
-        else if(horizontal > 0 || moveDirection.x > 0)
-        {
-            transform.localScale = new Vector3(2, 2, 1);
-        }
-
-        if(horizontal != 0){
-            rigidbody2D.velocity = new Vector2(horizontal * speed, rigidbody2D.velocity.y);
-            animator.SetBool("Running", horizontal != 0.0f);
-        }
-        else if (moveDirection.x != 0){
-            rigidbody2D.velocity = new Vector2(moveDirection.x * speed, rigidbody2D.velocity.y);
-            animator.SetBool("Running", moveDirection.x != 0.0f);
-        }
-        else{
-            animator.SetBool("Running", false);
-        }*/
     }
 
     private void Jump(){
@@ -336,30 +317,24 @@ public class BarryController : MonoBehaviour
         {
             rigidbody2D.AddForce(Vector2.up * jumpingForce * 2, ForceMode2D.Impulse);
             animator.SetBool("Jumping", true);
-            //animator.Play("BarryJumps");
         }
     }
 
-    private void Dash(){
-        if (Input.GetKey(KeyCode.C) && dashCoolDown <= 0 && !isDashing && groundTouched)
-        {
-            if(transform.localScale.x > 0){
-                rigidbody2D.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
-            }
-            else{
-                rigidbody2D.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
-            }
-            isDashing = true;
-            groundTouched = false;
-            animator.Play("BarryDash");
-            rigidbody2D.isKinematic = true;
-        }
-    }
-    public void EndDash(){
-        rigidbody2D.isKinematic = false;
-        rigidbody2D.velocity = new Vector2(0, rigidbody2D.velocity.y);
+    private IEnumerator Dash(){
+
+        isDashing = true;
+        rigidbody2D.gravityScale = 0;
+        rigidbody2D.velocity = new Vector2(dashVelocity * (transform.localScale.x/2), 0);
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemies"), true);
+        animator.Play("BarryDash");
+
+        dashCoolDown = 1.0f;
+
+        yield return new WaitForSeconds(dashTime);
+        
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemies"), false);
         isDashing = false;
-        dashCoolDown = 0.5f;
+        rigidbody2D.gravityScale = initialGravity;
     }
 
     private void FirstAttack(){
