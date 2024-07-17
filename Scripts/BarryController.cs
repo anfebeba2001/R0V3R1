@@ -73,6 +73,7 @@ public class BarryController : MonoBehaviour
 
     private bool laddering;
     private float ladderingCoolDown;
+    private bool fightingBossBool;
 
     void Start()
     {
@@ -234,7 +235,7 @@ public class BarryController : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D col)
     {
-        if(col.gameObject.tag == "Ladder")
+        if(col.gameObject.tag == "Ladder" && !fightingBossBool)
         {
             if((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || jumpButtonValue == 1) && !laddering && !hurt && ladderingCoolDown <= 0)
             {
@@ -549,5 +550,9 @@ public class BarryController : MonoBehaviour
     public int getCurrentTears()
     {
         return currentTears;
+    }
+    void fightingBoss()
+    {
+        fightingBossBool = true;
     }
 }

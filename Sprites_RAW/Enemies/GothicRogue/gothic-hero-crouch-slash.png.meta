@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 74849e0a03c43d64f989ee7e053edf53
+guid: b1beda3d300bc1a459e72bd4a68fdde7
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -121,91 +121,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: gothic-hero-idle_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 38
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 25f2da2f20ddc8c41aa767d59d1bbdfc
-      internalID: -1261329204
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gothic-hero-idle_1
-      rect:
-        serializedVersion: 2
-        x: 38
-        y: 0
-        width: 38
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 457d5daade8b7af4eb6fd60918300abf
-      internalID: 491271598
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gothic-hero-idle_2
-      rect:
-        serializedVersion: 2
-        x: 76
-        y: 0
-        width: 38
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 54530bbeee5e02d46b123cdacfebd36d
-      internalID: 638214253
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: gothic-hero-idle_3
-      rect:
-        serializedVersion: 2
-        x: 114
-        y: 0
-        width: 38
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b34f6d5fa34c26747a0b74dcccd84dc7
-      internalID: 1958305442
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
+    sprites: []
     outline: []
     physicsShape: []
     bones: []
@@ -216,11 +132,7 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      gothic-hero-idle_0: -1261329204
-      gothic-hero-idle_1: 491271598
-      gothic-hero-idle_2: 638214253
-      gothic-hero-idle_3: 1958305442
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

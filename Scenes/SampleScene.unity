@@ -3919,6 +3919,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Barry
       objectReference: {fileID: 0}
+    - target: {fileID: 4295405098093076773, guid: 42fd8af663c8bd94d9ae3089a6e5e02d, type: 3}
+      propertyPath: leftButton
+      value: 
+      objectReference: {fileID: 456161558}
+    - target: {fileID: 4295405098093076773, guid: 42fd8af663c8bd94d9ae3089a6e5e02d, type: 3}
+      propertyPath: rightButton
+      value: 
+      objectReference: {fileID: 1114035915}
     - target: {fileID: 5007219636398204147, guid: 42fd8af663c8bd94d9ae3089a6e5e02d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.41
