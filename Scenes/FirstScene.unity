@@ -13276,6 +13276,7 @@ GameObject:
   - component: {fileID: 1031040088}
   - component: {fileID: 1031040087}
   - component: {fileID: 1031040086}
+  - component: {fileID: 1031040089}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -13357,6 +13358,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1031040089
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031040085}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 184f7c670a5ee234fbc3a01975b46b69, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1041449197
 GameObject:
   m_ObjectHideFlags: 0
@@ -20553,7 +20575,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1667773793}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -20582,7 +20604,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.66, y: 0.48}
+    oldSize: {x: 0.38, y: 0.48}
     newSize: {x: 0.38, y: 0.48}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -20718,6 +20740,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cad96a321402644ebb9c7296db3f4b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RogueSlash: {fileID: 3214484916911204966, guid: 22379d2d9499788438e3dae357052af8, type: 3}
 --- !u!4 &1667773800
 Transform:
   m_ObjectHideFlags: 0
