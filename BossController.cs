@@ -66,4 +66,16 @@ public class BossController : MonoBehaviour
     {
         dialogs = dialogsPrefabs;
     }
+    public bool getTaunted ()
+    {
+        return taunted;
+    }
+    public float getMaxPos()
+    {
+        return maxLimitPos;
+    }
+    public float getMinPos()
+    {
+        return minLimitPos;
+    }
 }
