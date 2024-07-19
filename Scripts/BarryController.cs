@@ -61,6 +61,9 @@ public class BarryController : MonoBehaviour
     public float dashTime = 0.4f;
     private float initialGravity;
 
+    private IEnumerator coroutineFAT;
+    private IEnumerator coroutineSAT;
+
     private Vector2 moveDirection;
     private float jumpButtonValue;
     private float healthButtonValue;
@@ -93,6 +96,9 @@ public class BarryController : MonoBehaviour
         freeState = true;
 
         initialGravity = rigidbody2D.gravityScale;
+
+        IEnumerator coroutineFAT = FirstAirAttack();
+        IEnumerator coroutineSAT = SecondAirAttack();
     }
 
 
@@ -137,11 +143,27 @@ public class BarryController : MonoBehaviour
             SecondAttack();
             ThirdAttack();
 
+            //AirAttacking
+            if (Input.GetKey(KeyCode.X) && !grounded && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
+            {
+                StartCoroutine(FirstAirAttack());
+            }
+
+            if (Input.GetKey(KeyCode.X) && !grounded && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+            {
+                StartCoroutine(SecondAirAttack());
+            }
+
+            ThirdAirAttack();
+
             //BowAttack
             BowAttack();
 
             //Healing
             Healing();
+
+            //Faling
+            Falling();
         }
 
 
@@ -215,9 +237,20 @@ public class BarryController : MonoBehaviour
             comboAttackTimer += Time.deltaTime;
         }
         if(comboAttackTimer >= 0.8f){
+            if(!grounded && (firstAttack || secondAttack || thirdAttack)){
+                rigidbody2D.gravityScale = initialGravity;
+            }
             firstAttack = false;
             secondAttack = false;
             thirdAttack = false;
+        }
+        
+        //Keep air combo
+        if(!grounded && secondAttack){
+            StopCoroutine(coroutineFAT);
+        }
+        else if(!grounded && thirdAttack){
+            StopCoroutine(coroutineSAT);
         }
     }
 
@@ -320,6 +353,12 @@ public class BarryController : MonoBehaviour
         }
     }
 
+    private void Falling(){
+        if(rigidbody2D.velocity.y < 0){
+            animator.SetBool("Falling", true);
+        }
+    }
+
     private IEnumerator Dash(){
 
         isDashing = true;
@@ -340,7 +379,7 @@ public class BarryController : MonoBehaviour
     private void FirstAttack(){
 
 
-        if (Input.GetKey(KeyCode.X) && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
+        if (Input.GetKey(KeyCode.X) && grounded && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
         {
             animator.Play("BarryAttacks");
             attackCoolDown = 0.9f;
@@ -352,7 +391,7 @@ public class BarryController : MonoBehaviour
     }
 
     private void SecondAttack(){
-        if (Input.GetKey(KeyCode.X) && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        if (Input.GetKey(KeyCode.X) && grounded && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
         {
             animator.Play("BarryAttack2");
             comboAttackTimer = 0;
@@ -365,9 +404,61 @@ public class BarryController : MonoBehaviour
     }
 
     private void ThirdAttack(){
-        if (Input.GetKey(KeyCode.X) && !firstAttack && secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        if (Input.GetKey(KeyCode.X) && grounded && !firstAttack && secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
         {
             animator.Play("BarryAttack3");
+            attackCoolDown = 0.9f;
+            //stamina -= 30;
+            secondAttack = false;
+            thirdAttack = true;
+            staminaCoolDown = Time.time;
+            attacking = true;
+        }
+    }
+
+    private IEnumerator FirstAirAttack(){
+        if (Input.GetKey(KeyCode.X) && !grounded && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
+        {
+            rigidbody2D.gravityScale = 0;
+            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0);
+            animator.Play("BarryAirAttack1");
+            attackCoolDown = 0.9f;
+            attacking = true;
+            firstAttack = true;
+            //stamina -= 30;
+            comboAttackTimer = 0;
+
+            yield return new WaitForSeconds(0.4f);
+
+            rigidbody2D.gravityScale = initialGravity;
+        }
+    }
+
+    private IEnumerator SecondAirAttack(){
+        if (Input.GetKey(KeyCode.X) && !grounded && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        {
+            rigidbody2D.gravityScale = 0;
+            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0);
+            animator.Play("BarryAirAttack2");
+            comboAttackTimer = 0;
+            //stamina -= 30;
+            firstAttack = false;
+            secondAttack = true;
+            staminaCoolDown = Time.time;
+            attacking = true;
+
+            yield return new WaitForSeconds(0.4f);
+
+            rigidbody2D.gravityScale = initialGravity;
+        }
+    }
+
+    private void ThirdAirAttack(){
+        if (Input.GetKey(KeyCode.X) && !grounded && !firstAttack && secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        {
+            rigidbody2D.gravityScale = initialGravity;
+            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, -5);
+            animator.Play("BarryAirAttack3");
             attackCoolDown = 0.9f;
             //stamina -= 30;
             secondAttack = false;
@@ -410,6 +501,8 @@ public class BarryController : MonoBehaviour
         if (coll.gameObject.tag == "Ground")
         {
             groundTouched = true;
+
+            animator.SetBool("Falling", false);
 
             grounded = true;
             if(rigidbody2D.velocity.y <= 0){
