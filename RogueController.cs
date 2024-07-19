@@ -25,8 +25,8 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
     private bool chargingVertical;
     private bool goingDownAttackBool;
     private Vector3 originalPos;
-    public GameObject RogueSlash;
-
+    public GameObject rogueSlash;
+    public GameObject rogueVortex;
     // Initialize the elements.
 
     void Start()
@@ -52,13 +52,13 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
 
             attacking = true;
             int choiseAttack = Random.Range(1,60);
-                if(choiseAttack%6 >= 0)
+                if(choiseAttack%2 == 0)
                 {
                     cruchToCharge(true);
                 }
-                else if(choiseAttack%6 == 1)
+                else if(choiseAttack%2 == 1)
                 {
-
+                    cruchToChargeVortex(true);
                 }  
                 else if(choiseAttack%6 == 2)
                 {
@@ -97,7 +97,7 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
         if(chargingVertical)
         {
             transform.position += new Vector3(1*(transform.localScale.x/6)/4.17f,0.5f/9f,0);
-            if((transform.localScale.x > 0 && transform.position.x >= maxPos - 5.5f ) || (transform.localScale.x < 0 && transform.position.x <= minPos + 5.5f ))
+            if( transform.position.y >= originalPos.y + 3)
             {
                 cameraObj.GetComponent<Animator>().Play("CameraShakeEffect");
                 chargingVertical = false;
@@ -107,16 +107,18 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
 
         if(goingDownAttackBool)
         {
-            transform.position = new Vector3(transform.position.x,transform.position.y-0.5f/9f,0);
+            transform.position = new Vector3(transform.position.x,transform.position.y-0.5f/7f,0);
             GetComponent<Animator>().Play("RogueChargingAttackVerticalDrop");
-            if(transform.position.y == originalPos.y)
+            if(transform.position.y <= originalPos.y)
             {
                 cameraObj.GetComponent<Animator>().Play("CameraShakeEffect");
+                attacking = false;
                 goingDownAttackBool = false;
                 makingDistanceValue = 1;
                 attackCoolDown = 2f;
-                RogueSlash.transform.position = transform.position;
-                Instantiate(RogueSlash);
+                rogueSlash.transform.position = transform.position;
+                rogueSlash.transform.position += new Vector3(0,-1,0)*0.5f;
+                Instantiate(rogueSlash);
             }
             
         }
@@ -179,5 +181,27 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
     {
         cruchToCharge(false);
     }
-    
+    void endCharginVortex()
+    {
+        cruchToChargeVortex(false);
+    }
+
+    private void cruchToChargeVortex(bool charging)
+    {
+       if(charging)
+        {
+            GetComponent<Animator>().Play("RogueChargingVortex");
+        }
+        else
+        {
+            rogueVortex.transform.position = new Vector3(
+                                                         Random.Range(maxPos*10,minPos*10)/10,
+                                                         Random.Range((originalPos.y+3)*10,originalPos.y*10)/10,
+                                                         rogueVortex.transform.position.z);
+                                                         attacking = false;
+            makingDistanceValue = 1;
+            attackCoolDown = 2f;
+            Instantiate(rogueVortex);
+        }
+    }
 }
