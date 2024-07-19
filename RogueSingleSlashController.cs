@@ -20,7 +20,7 @@ public class RogueSingleSlashController : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().color = luckyParryColor;
         }
-        transform.position += new Vector3(0.2f,0,0)*(transform.localScale.x/10);
+        transform.position += new Vector3(0.05f,0,0)*(transform.localScale.x/10);
         lifeTime -= Time.deltaTime;
         if(lifeTime <= 0)
         {

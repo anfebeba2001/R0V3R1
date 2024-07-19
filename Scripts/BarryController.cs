@@ -97,8 +97,8 @@ public class BarryController : MonoBehaviour
 
         initialGravity = rigidbody2D.gravityScale;
 
-        IEnumerator coroutineFAT = FirstAirAttack();
-        IEnumerator coroutineSAT = SecondAirAttack();
+        coroutineFAT = FirstAirAttack();
+        coroutineSAT = SecondAirAttack();
     }
 
 
@@ -428,7 +428,7 @@ public class BarryController : MonoBehaviour
             //stamina -= 30;
             comboAttackTimer = 0;
 
-            yield return new WaitForSeconds(0.4f);
+            yield return new WaitForSeconds(0.65f);
 
             rigidbody2D.gravityScale = initialGravity;
         }
@@ -447,7 +447,7 @@ public class BarryController : MonoBehaviour
             staminaCoolDown = Time.time;
             attacking = true;
 
-            yield return new WaitForSeconds(0.4f);
+            yield return new WaitForSeconds(0.65f);
 
             rigidbody2D.gravityScale = initialGravity;
         }
