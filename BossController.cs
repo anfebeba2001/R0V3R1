@@ -42,7 +42,7 @@ public class BossController : MonoBehaviour
             dialogHandler.SetActive(false);
         }
     }
-    void dialog(string phrase)
+    public void dialog(string phrase)
     {
         dialogTimer = 1.5f;
         dialogHandler.SetActive(true);
@@ -59,6 +59,28 @@ public class BossController : MonoBehaviour
                     dialogHandler.GetComponent<TextMeshProUGUI>().text = dialogs[0][2];
                  else if(choise%4 == 3)
                     dialogHandler.GetComponent<TextMeshProUGUI>().text = dialogs[0][3];        
+            break;
+            case "Attack":
+                int choiseAttack = Random.Range(1,40);
+                if(choiseAttack%4 == 0)
+                    dialogHandler.GetComponent<TextMeshProUGUI>().text = dialogs[1][0];
+                else if(choiseAttack%4 == 1)
+                    dialogHandler.GetComponent<TextMeshProUGUI>().text = dialogs[1][1];
+                else if(choiseAttack%4 == 2)
+                    dialogHandler.GetComponent<TextMeshProUGUI>().text = dialogs[1][2];
+                 else if(choiseAttack%4 == 3)
+                    dialogHandler.GetComponent<TextMeshProUGUI>().text = dialogs[1][3];  
+            break;
+            case "Losing":
+            int coiseLosing = Random.Range(1,40);
+                if(coiseLosing%4 == 0)
+                    dialogHandler.GetComponent<TextMeshProUGUI>().text = dialogs[2][0];
+                else if(coiseLosing%4 == 1)
+                    dialogHandler.GetComponent<TextMeshProUGUI>().text = dialogs[2][1];
+                else if(coiseLosing%4 == 2)
+                    dialogHandler.GetComponent<TextMeshProUGUI>().text = dialogs[2][2];
+                 else if(coiseLosing%4 == 3)
+                    dialogHandler.GetComponent<TextMeshProUGUI>().text = dialogs[2][3];  
             break;
         }
     }

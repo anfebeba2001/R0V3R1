@@ -42,7 +42,6 @@ public class RogueVortexController : MonoBehaviour
             else
             {
                 player.transform.position += new Vector3(0,-1,0)*dragSpeed*4;
-                //Hola 
             }
         }
          if (microDamageTimer > 0)

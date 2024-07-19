@@ -11,26 +11,50 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
               "Tu osadía ha superado tu sentido común... Muere... ",
               "Ni tus gritos podrán escapar.",
               "DESFALLECE"},
+
+new string[] {"Levanta tu espada!",
+              "Pelea mientras te quede aliento",
+              "Enterraré tu cuerpo junto a los demás",
+              "Serás el festín de los gusanos"
+
+            },
+new string[] {
+            "Miserable escoria...",
+            "Ningún niño podrá conmigo!",
+            "Me estoy comenzando a cansar de esto",
+            "No huyas del filo de tu destino"
+
+}
 };
     private bool taunted;
     private float attackCoolDown;
     private bool attacking;
     private GameObject player;
     private bool chargingHorizontal;
-    private float maxPos;
-    private float minPos;
+    public float maxPos;
+    public float minPos;
  
     private float makingDistanceValue;
-    private GameObject cameraObj;
+    public GameObject cameraObj;
     private bool chargingVertical;
     private bool goingDownAttackBool;
     private Vector3 originalPos;
     public GameObject rogueSlash;
+    public GameObject rogueSingleSlash;
     public GameObject rogueVortex;
+    private float dialogCoolDown;
+    private float health;
+    private float maxHealth;
+    private int luckySingleSlash;
+    private int cruchToChargeSlashCounterBack;
+
     // Initialize the elements.
 
     void Start()
     {
+        dialogCoolDown = 20;
+        maxHealth = 3000;
+        health = maxHealth;
         originalPos = transform.position;
         makingDistanceValue = 1;
         attackCoolDown = 1f;
@@ -52,17 +76,20 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
 
             attacking = true;
             int choiseAttack = Random.Range(1,60);
-                if(choiseAttack%2 == 0)
+                if(choiseAttack%3 == 0)
                 {
                     cruchToCharge(true);
                 }
-                else if(choiseAttack%2 == 1)
+                else if(choiseAttack%3 == 1)
                 {
                     cruchToChargeVortex(true);
                 }  
-                else if(choiseAttack%6 == 2)
+                else if(choiseAttack%3 == 2)
                 {
-
+                    
+                    cruchToChargeSlashCounterBack= Random.Range(3,6);
+                    luckySingleSlash = Random.Range(1,cruchToChargeSlashCounterBack);
+                    cruchToChargeSlash(true);
                 }    
                 else if(choiseAttack%6 == 3)
                 {
@@ -76,7 +103,25 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
                 {
 
                 } 
-            }      
+            }     
+
+
+            if(dialogCoolDown > 0)
+            {
+                dialogCoolDown -= Time.deltaTime;
+            }
+            else
+            {
+                dialogCoolDown = 10f;
+                if(health > maxHealth/3)
+                {
+                    GetComponent<BossController>().dialog("Attack");
+                }
+                else
+                {
+                    GetComponent<BossController>().dialog("Losing");
+                }
+            }
         }
         else
         {
@@ -140,7 +185,6 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
             GetComponent<Animator>().Play("RogueWalking");
         }
     }
-
     private void cruchToCharge(bool charging)
     {
         if(charging)
@@ -185,6 +229,42 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
     {
         cruchToChargeVortex(false);
     }
+    void endCharginSlash()
+    {
+        cruchToChargeSlash(false);
+        cruchToChargeSlashCounterBack--;
+        if(cruchToChargeSlashCounterBack == 0)
+        {
+            attacking = false;
+            makingDistanceValue = 1;
+            attackCoolDown = 2f;    
+        }
+    }
+    
+    private void cruchToChargeSlash(bool charging)
+    {
+        if(charging)
+        {
+            GetComponent<Animator>().Play("RogueChargingSlash");
+        }
+        else
+        {
+            if(player.transform.position.x > transform.position.x)
+            {   
+                transform.localScale = new Vector3(1,1,1)*4.1795f;
+            }
+            else
+            {
+                transform.localScale = new Vector3(-1,1,1)*4.1795f;
+                
+            }
+
+            rogueSingleSlash.transform.localScale = transform.localScale*10/4.1795f;
+            rogueSingleSlash.transform.position = transform.position;        
+            rogueSingleSlash.GetComponent<RogueSingleSlashController>().isLucky = luckySingleSlash == cruchToChargeSlashCounterBack;
+            Instantiate(rogueSingleSlash);
+        }
+    }
 
     private void cruchToChargeVortex(bool charging)
     {
@@ -204,4 +284,5 @@ new string[] {"Fuiste demasiado lejos... Ahora pagarás.",
             Instantiate(rogueVortex);
         }
     }
+    
 }

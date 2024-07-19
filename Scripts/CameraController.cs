@@ -27,5 +27,6 @@ public class CameraController : MonoBehaviour
         Vector3 playerPositionFixed = player.transform.position;
         playerPositionFixed.z = -20;
         mainCamera.transform.position = playerPositionFixed;
+        mainCamera.transform.position += new Vector3(0,1,0)*2.5f;
     }
 }
