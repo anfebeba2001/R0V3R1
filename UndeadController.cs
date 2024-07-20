@@ -35,7 +35,7 @@ public class UndeadController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if(!walking)
         {

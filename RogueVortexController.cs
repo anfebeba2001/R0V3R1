@@ -15,7 +15,7 @@ public class RogueVortexController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if(enemyAttracted)
         {
@@ -23,7 +23,7 @@ public class RogueVortexController : MonoBehaviour
             if(microDamageTimer <= 0)
             {
                 player.SendMessage("microDamage", 5);
-                microDamageTimer = 0.4f;
+                microDamageTimer = 0.2f;
             }
             
             if(player.transform.position.x < transform.position.x)

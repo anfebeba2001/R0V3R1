@@ -7,6 +7,7 @@ using UnityEngine;
 public class BossController : MonoBehaviour
 {
     private GameObject player;
+    public GameObject mainCamera;
     private bool taunted;
     public GameObject enemyHealthLifeBar;
     public GameObject dialogHandler;
@@ -15,6 +16,9 @@ public class BossController : MonoBehaviour
 
     private string[][] dialogs = new string[4][];
     private float dialogTimer;
+    private float maxHealth;
+    private float health;
+    public Vector3 lockedCameraPosition;
 
     void Start()
     {
@@ -25,6 +29,15 @@ public class BossController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(taunted)
+        {
+            mainCamera.GetComponent<CameraController>().locked = true;
+            mainCamera.GetComponent<CameraController>().lockedPosition = lockedCameraPosition;
+            if(health <= 0)
+            {
+               mainCamera.GetComponent<CameraController>().locked = false; 
+            }
+        }
         if(!taunted && player.transform.position.x <  maxLimitPos && player.transform.position.x > minLimitPos && player.transform.position.y > transform.position.y - 0.5f && player.transform.position.y < transform.position.y + 0.5f)
         {
             enemyHealthLifeBar.SetActive(true);
@@ -99,5 +112,23 @@ public class BossController : MonoBehaviour
     public float getMinPos()
     {
         return minLimitPos;
+    }
+
+    internal float getMaxHealth()
+    {
+        return maxHealth;
+    }
+
+    internal float getHealth()
+    {
+        return health;
+    }
+    public void setMaxHealth( float maxHealth)
+    {
+        this.maxHealth = maxHealth;
+    }
+    public void setHealth(float health)
+    {
+        this.health = health;
     }
 }

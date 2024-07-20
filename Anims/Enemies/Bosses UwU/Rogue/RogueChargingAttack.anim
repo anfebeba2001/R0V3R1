@@ -33,15 +33,6 @@ AnimationClip:
     classID: 212
     script: {fileID: 0}
     flags: 2
-  - serializedVersion: 2
-    curve:
-    - time: 0
-      value: {fileID: 2027348550, guid: b3597df80226e304da0b20ec99d267a3, type: 3}
-    attribute: m_Sprite
-    path: EffectHandler
-    classID: 212
-    script: {fileID: 0}
-    flags: 2
   m_SampleRate: 60
   m_WrapMode: 0
   m_Bounds:
@@ -58,21 +49,11 @@ AnimationClip:
       isPPtrCurve: 1
       isIntCurve: 0
       isSerializeReferenceCurve: 0
-    - serializedVersion: 2
-      path: 1805971385
-      attribute: 0
-      script: {fileID: 0}
-      typeID: 212
-      customType: 23
-      isPPtrCurve: 1
-      isIntCurve: 0
-      isSerializeReferenceCurve: 0
     pptrCurveMapping:
     - {fileID: -1261329204, guid: 74849e0a03c43d64f989ee7e053edf53, type: 3}
     - {fileID: 491271598, guid: 74849e0a03c43d64f989ee7e053edf53, type: 3}
     - {fileID: 638214253, guid: 74849e0a03c43d64f989ee7e053edf53, type: 3}
     - {fileID: 1958305442, guid: 74849e0a03c43d64f989ee7e053edf53, type: 3}
-    - {fileID: 2027348550, guid: b3597df80226e304da0b20ec99d267a3, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

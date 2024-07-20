@@ -9,6 +9,8 @@ public class HealthController : MonoBehaviour
     private GameObject healthBar;
     private GameObject player;
     private GameObject staminaBar;
+    public GameObject boss;
+    public GameObject healthBarBoss;
     void Start()
     {
         healthBar = GameObject.FindGameObjectWithTag("HealthBar");
@@ -19,6 +21,8 @@ public class HealthController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        healthBarBoss.GetComponent<Slider>().maxValue = boss.GetComponent<BossController>().getMaxHealth();
+        healthBarBoss.GetComponent<Slider>().value = boss.GetComponent<BossController>().getHealth();
         healthBar.GetComponent<Slider>().maxValue = player.GetComponent<BarryController>().getMaxHealth();
         healthBar.GetComponent<Slider>().value = player.GetComponent<BarryController>().getHealth();
         staminaBar.GetComponent<Slider>().value = player.GetComponent<BarryController>().getStamina();
