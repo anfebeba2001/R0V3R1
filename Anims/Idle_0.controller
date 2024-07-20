@@ -760,11 +760,7 @@ AnimatorStateMachine:
     m_Position: {x: 1190, y: 550, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7422389790840615178}
-<<<<<<< Updated upstream
     m_Position: {x: 480, y: 0, z: 0}
-=======
-    m_Position: {x: 470, y: 30, z: 0}
->>>>>>> Stashed changes
   - serializedVersion: 1
     m_State: {fileID: 9027307323854832839}
     m_Position: {x: 290, y: -70, z: 0}
