@@ -8,6 +8,8 @@ public class DummyController : MonoBehaviour
     private GameObject blood;
     private GameObject damageMessagePopUp;
 
+    private bool hitted;
+
 
     // Start is called before the first frame update
     void Start()
@@ -19,7 +21,12 @@ public class DummyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        hitted = GetComponent<EnemyController>().getHitted();
+        if(hitted)
+        {
+            GetComponent<EnemyController>().cancelHitted();
+            Hitted(GetComponent<EnemyController>().getDamageReceived());
+        }
     }
 
     public void Hitted(float damage)
