@@ -18366,6 +18366,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1393023339 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 412557997810139721, guid: 38bac70ccdf3b8b4a8aa71e986da5a43, type: 3}
+  m_PrefabInstance: {fileID: 2145257676}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1393930156
 GameObject:
   m_ObjectHideFlags: 0
@@ -21605,12 +21610,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e936d1fc1aa12a04892ca6bd9a312dda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 0}
+  mainCamera: {fileID: 1393023339}
   enemyHealthLifeBar: {fileID: 2010339226}
   dialogHandler: {fileID: 733909167}
   maxLimitPos: -1
   minLimitPos: -12
-  lockedCameraPosition: {x: -7, y: 5, z: 20}
+  lockedCameraPosition: {x: -7, y: 5, z: -20}
 --- !u!1 &1677994398
 GameObject:
   m_ObjectHideFlags: 0
