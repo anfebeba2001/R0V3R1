@@ -18,7 +18,6 @@ public class BossController : MonoBehaviour
     private float dialogTimer;
     private float maxHealth;
     private float health;
-    public Vector3 lockedCameraPosition;
 
     void Start()
     {
@@ -31,19 +30,14 @@ public class BossController : MonoBehaviour
     {
         if(taunted)
         {
-            mainCamera.GetComponent<CameraController>().locked = true;
-            mainCamera.GetComponent<CameraController>().lockedPosition = lockedCameraPosition;
-            if(health <= 0)
-            {
-               mainCamera.GetComponent<CameraController>().locked = false; 
-            }
+          player.SendMessage("fightingBoss",false);  
         }
         if(!taunted && player.transform.position.x <  maxLimitPos && player.transform.position.x > minLimitPos && player.transform.position.y > transform.position.y - 0.5f && player.transform.position.y < transform.position.y + 0.5f)
         {
             enemyHealthLifeBar.SetActive(true);
             dialog("Start");            
             enemyHealthLifeBar.gameObject.SetActive(true);
-            player.SendMessage("fightingBoss");
+            player.SendMessage("fightingBoss",true);
             taunted = true;
         }
 

@@ -6,12 +6,9 @@ public class CameraController : MonoBehaviour
 {
     private GameObject mainCamera;
     private GameObject player;
-    public bool locked;
-    public Vector3 lockedPosition;
 
     void Start()
     {
-        locked = false;
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         player = GameObject.FindGameObjectWithTag("Player");
     }
@@ -27,18 +24,12 @@ public class CameraController : MonoBehaviour
         {
             mainCamera.GetComponent<Camera>().orthographicSize += 0.025f;
         }
-        if(!locked)
-        {      
-        
         
         Vector3 playerPositionFixed = player.transform.position;
         playerPositionFixed.z = -20;
         mainCamera.transform.position = playerPositionFixed;
-        mainCamera.transform.position += new Vector3(0,1,0)*2.5f;
-        }
-        else
-        {
-            mainCamera.transform.position = lockedPosition;  
-        }
+        mainCamera.transform.position += new Vector3(0,1,0)*1.5f;
+        
+
     }
 }
