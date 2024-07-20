@@ -29,6 +29,8 @@ public class BarryController : MonoBehaviour
     private bool groundTouched;
     private int currentTears;
 
+    private bool canMove;
+
     private Rigidbody2D rigidbody2D;
     private Animator animator;
     private CapsuleCollider2D capsuleCollider2D;
@@ -99,6 +101,7 @@ public class BarryController : MonoBehaviour
 
         coroutineFAT = FirstAirAttack();
         coroutineSAT = SecondAirAttack();
+        canMove = true;
     }
 
 
@@ -129,6 +132,7 @@ public class BarryController : MonoBehaviour
 
             //Running
             Run();
+            
 
             //Jump
             Jump();
@@ -246,10 +250,12 @@ public class BarryController : MonoBehaviour
                 thirdAttack = false;
             }
             else if(!grounded && (firstAttack || secondAttack)){
+                
                 rigidbody2D.gravityScale = initialGravity;
                 firstAttack = false;
                 secondAttack = false;
             }
+            canMove = true;
         }
         
         //Keep Barry in air while air attack combo
@@ -326,8 +332,9 @@ public class BarryController : MonoBehaviour
     private void Run(){
 
 
-        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || moveDirection.x < 0) && rigidbody2D.velocity.x > -maxSpeed)
+        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || moveDirection.x < 0) && canMove && rigidbody2D.velocity.x > -maxSpeed)
         {
+            Debug.Log("Run left");
             rigidbody2D.AddForce(Vector2.left * speed, ForceMode2D.Force);
             transform.localScale = new Vector3(-2, 2, 1);
             if(rigidbody2D.velocity.x < -0.3f){
@@ -335,8 +342,9 @@ public class BarryController : MonoBehaviour
             }
             
         }
-        else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) || moveDirection.x > 0) && rigidbody2D.velocity.x <maxSpeed)
+        else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) || moveDirection.x > 0) && canMove && rigidbody2D.velocity.x <maxSpeed)
         {
+            Debug.Log("Run right");
             rigidbody2D.AddForce(Vector2.right * speed, ForceMode2D.Force);
             transform.localScale = new Vector3(2, 2, 1);
             if(rigidbody2D.velocity.x > 0.3f){
@@ -426,14 +434,16 @@ public class BarryController : MonoBehaviour
     private IEnumerator FirstAirAttack(){
         if (Input.GetKey(KeyCode.X) && !grounded && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
         {
-            rigidbody2D.gravityScale = 0;
-            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0);
-            animator.Play("BarryAirAttack1");
-            attackCoolDown = 0.9f;
-            attacking = true;
+            canMove = false;
             firstAttack = true;
-            //stamina -= 30;
+            rigidbody2D.gravityScale = 0;
+            rigidbody2D.velocity = new Vector2(0, 0);
+            animator.Play("BarryAirAttack1");
             comboAttackTimer = 0;
+            attackCoolDown = 0.9f;            
+            //stamina -= 30;
+            staminaCoolDown = Time.time;
+            attacking = true;
 
             yield return new WaitForSeconds(0.65f);
 
@@ -444,12 +454,14 @@ public class BarryController : MonoBehaviour
     private IEnumerator SecondAirAttack(){
         if (Input.GetKey(KeyCode.X) && !grounded && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
         {
+            canMove = false;
             firstAttack = false;
             secondAttack = true;
             rigidbody2D.gravityScale = 0;
-            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, 0);
+            rigidbody2D.velocity = new Vector2(0, 0);
             animator.Play("BarryAirAttack2");
             comboAttackTimer = 0;
+            attackCoolDown = 0.9f;
             //stamina -= 30;
             staminaCoolDown = Time.time;
             attacking = true;
@@ -461,11 +473,13 @@ public class BarryController : MonoBehaviour
     }
 
     private void ThirdAirAttack(){
-        thirdAttack = true;
+        canMove = false;
         secondAttack = false;
+        thirdAttack = true;
         rigidbody2D.gravityScale = initialGravity;
-        rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, -2);
+        rigidbody2D.velocity = new Vector2(0, -2);
         animator.Play("BarryAirAttack3");
+        comboAttackTimer = 0;
         attackCoolDown = 0.9f;
         //stamina -= 30;
         staminaCoolDown = Time.time;
