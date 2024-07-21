@@ -9,22 +9,17 @@ public class TearsController : MonoBehaviour
 {
     public GameObject text;
     private GameObject player;
-    private bool goingUp;
     private float goingUpTimer;
-    private bool justShowing;
-    private int currentValue;
+    public int currentValue;
     public int finalValue;
     private float justShowingTimer;
 
     // Start is called before the first frame update
     void Start()
     {
+        currentValue = 0;
         player = GameObject.FindGameObjectWithTag("Player");
-        goingUp = true;
         goingUpTimer = 3f;
-        justShowing = false;
-        text.transform.position = transform.position;
-        text.transform.localScale = new UnityEngine.Vector3(0,0,0);
         justShowingTimer = 3;
     }
 
@@ -37,7 +32,7 @@ public class TearsController : MonoBehaviour
         }
         if(currentValue < finalValue)
         {
-            currentValue += 2;
+            currentValue += 1;
             if(currentValue < finalValue - 1500)
             {
                 currentValue += 15;
@@ -50,20 +45,20 @@ public class TearsController : MonoBehaviour
         }
         else
         {
-            if(!justShowing)
+            
+            if(justShowingTimer > 0f)
             {
-                justShowing = true;
+                justShowingTimer -= Time.deltaTime;
+            }
+            else
+            {
+                player.GetComponent<BarryController>().addTears(finalValue);
+                Destroy(gameObject);
             }
         }
-        if(justShowing && justShowingTimer > 0f)
-        {
-            justShowingTimer -= Time.deltaTime;
-        }
-        else
-        {
-           player.GetComponent<BarryController>().addTears(finalValue);
-           Destroy(gameObject);
-        }
+
+        
+        
     }
 
     private void goingUpMethod()

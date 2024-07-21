@@ -138,9 +138,6 @@ public class UndeadController : MonoBehaviour
             health -= (damage);
             Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
             Instantiate(blood, transform.position + new Vector3(0, 0f, 0), Quaternion.identity);
-            GetComponent<Rigidbody2D>().AddForce(Vector2.right, ForceMode2D.Impulse);
-            GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
-            
         }
     }
     void finishDeath()

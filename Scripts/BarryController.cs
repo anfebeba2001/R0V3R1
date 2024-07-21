@@ -334,7 +334,6 @@ public class BarryController : MonoBehaviour
 
         if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || moveDirection.x < 0) && canMove && rigidbody2D.velocity.x > -maxSpeed)
         {
-            Debug.Log("Run left");
             rigidbody2D.AddForce(Vector2.left * speed, ForceMode2D.Force);
             transform.localScale = new Vector3(-2, 2, 1);
             if(rigidbody2D.velocity.x < -0.3f){
@@ -344,7 +343,6 @@ public class BarryController : MonoBehaviour
         }
         else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) || moveDirection.x > 0) && canMove && rigidbody2D.velocity.x <maxSpeed)
         {
-            Debug.Log("Run right");
             rigidbody2D.AddForce(Vector2.right * speed, ForceMode2D.Force);
             transform.localScale = new Vector3(2, 2, 1);
             if(rigidbody2D.velocity.x > 0.3f){

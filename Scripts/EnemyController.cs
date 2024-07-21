@@ -73,6 +73,10 @@ public class EnemyController : MonoBehaviour
     {
         return damageMessagePopUp;
     }
+    public GameObject getTears()
+    {
+        return tears;
+    }
     public GameObject getBlood()
     {
         return bloodFX;

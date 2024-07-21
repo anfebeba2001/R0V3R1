@@ -6,238 +6,99 @@ using UnityEngine;
 
 public class SlimeController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    private float health = 50;
-    private bool taunted;
-    private bool searching;
-    private GameObject playerDetected;
-    private float speed = 7;
-    private bool attacking;
-    private Color normalColor = new Color(1, 1, 1, 1);
-    private Color attackingColor = new Color(1.0f, 0.0f, 0.0f, 0.8f);
-
-
-    private Vector3 upAttackingPos;
-    private float goingUpTimer;
-    private float goingDownTimer;
-    private bool goingUp;
-    private bool goingDown;
-    private float goingDownLimit = 0.06f;
-    private float goingUpLimit = 2.5f;
-    private Vector3 fixedPlayerPosition;
-    private float goingUpVelocity = 0.0075f;
-    private float goingDownVelocity = 0.24f;
-    private float normalRadius = 0.9f;
-    private float tauntedRadius = 1.5f;
-    private float damage = 30;
-    private float maxVel = 1.5f;
-    private bool dying;
-    private GameObject damageMessagePopUp;
+    private float maxHealth;
+    private float health;
     private GameObject blood;
-    private bool firstAttacked;
-    private float firstAttackedTimer;
-
-    private float hittedEffecTimer;
+    private GameObject tears;
+    private GameObject damageMessagePopUp;
+    private GameObject player;
+    private bool asleep;
+    private bool grounded;
+    private bool hitted;
+    private float firstDamageTimer;
 
     void Start()
     {
-
+        firstDamageTimer = 1f;
+        maxHealth = 200;
+        health = maxHealth;
+        tears = GetComponent<EnemyController>().getTears();
         blood = GetComponent<EnemyController>().getBlood();
         damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
-        dying = false;
-        goingDownTimer = 500;
-        goingUpTimer = 500;
+        asleep = true;
+        grounded = false;
+        GetComponent<Rigidbody2D>().isKinematic = true;
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-
-        if (health <= 0)
+        hitted = GetComponent<EnemyController>().getHitted();
+        if(hitted)
         {
-            transform.localScale = new Vector3(transform.localScale.x + 0.05f, transform.localScale.y + 0.05f, transform.localScale.z);
-            dying = true;
+            GetComponent<EnemyController>().cancelHitted();
+            Hitted(GetComponent<EnemyController>().getDamageReceived());
         }
-        if (dying)
+        if(health <= 0)
         {
-            GetComponent<Animator>().SetBool("Dying", true);
             GetComponent<Animator>().Play("SlimeDead");
         }
-        taunted = GetComponentInParent<EnemyController>().getTaunted();
-        if (!taunted && !dying)
+        if(asleep)
         {
-            GetComponent<SpriteRenderer>().color = normalColor;
-        }
-        if (taunted && !searching && !attacking)
-        {
-            searching = true;
-            playerDetected = GetComponentInParent<EnemyController>().getPlayerDetected();
-        }
-        if (taunted && searching && !attacking)
-        {
-            GetComponent<SpriteRenderer>().color = attackingColor;
-            if (playerDetected.transform.position.x > transform.position.x && GetComponent<Rigidbody2D>().velocity.x < maxVel)
+            if(player.transform.position.x < transform.position.x + 0.8f && player.transform.position.x > transform.position.x - 0.8f ) 
             {
-                GetComponent<Rigidbody2D>().AddForce(Vector2.right * speed, ForceMode2D.Force);
-            }
-            else if (playerDetected.transform.position.x < transform.position.x && GetComponent<Rigidbody2D>().velocity.x > -maxVel)
-            {
-
-                GetComponent<Rigidbody2D>().AddForce(Vector2.left * speed, ForceMode2D.Force);
-            }
-        }
-        if (attacking)
-        {
-
-            searching = false;
-            GetComponent<SpriteRenderer>().color = attackingColor;
-            playerDetected.GetComponent<CapsuleCollider2D>().isTrigger = true;
-            transform.localScale = new UnityEngine.Vector3(3, 7.5f, 1);
-            GetComponent<Rigidbody2D>().isKinematic = true;
-            playerDetected.GetComponent<Rigidbody2D>().isKinematic = true;
-            fixedPlayerPosition = transform.position;
-            fixedPlayerPosition.y -= 0.25f;
-            playerDetected.transform.position = fixedPlayerPosition;
-            transform.position = upAttackingPos;
-            GetComponent<CapsuleCollider2D>().isTrigger = true;
-
-            if (goingUpTimer < goingUpLimit)
-            {
-                goingUpTimer += Time.deltaTime;
-                upAttackingPos.y += goingUpVelocity;
-                goingUp = true;
-            }
-            else
-            {
-                if (goingUp)
-                {
-                    goingDownTimer = 0;
-                    goingUp = false;
-                    goingDown = true;
-                }
-
-            }
-
-            if (goingDownTimer < goingDownLimit && goingDown)
-            {
-                goingDownTimer += Time.deltaTime;
-                upAttackingPos.y -= goingDownVelocity;
-            }
-            else if (goingDown && !(goingDownTimer < goingDownLimit))
-            {
-                attacking = false;
-                searching = true;
-                goingDown = false;
-                GetComponent<CapsuleCollider2D>().isTrigger = false;
-                GetComponent<SpriteRenderer>().color = attackingColor;
-                playerDetected.GetComponent<CapsuleCollider2D>().isTrigger = false;
-                transform.localScale = new UnityEngine.Vector3(2, 2f, 1);
+                transform.localScale = new Vector3(transform.localScale.x,-transform.localScale.y,transform.localScale.x);
+                asleep = false;
                 GetComponent<Rigidbody2D>().isKinematic = false;
-                fixedPlayerPosition = playerDetected.transform.position;
-                fixedPlayerPosition.x -= 1.5f;
-                playerDetected.transform.position = fixedPlayerPosition;
-                playerDetected.SendMessage("BarryGotAttacked", damage);
-
-                playerDetected.GetComponent<Rigidbody2D>().isKinematic = false;
-                playerDetected.GetComponent<Rigidbody2D>().AddForce(new Vector2(-5, 5), ForceMode2D.Impulse);
             }
-
-
         }
-        if (firstAttackedTimer > 0)
+        if(grounded && firstDamageTimer > 0)
         {
-            firstAttackedTimer -= Time.deltaTime;
-        }
-        else
-        {
-            firstAttacked = false;
-            GetComponent<Rigidbody2D>().gravityScale = 1f;
-        }
+            firstDamageTimer -= Time.deltaTime;
+        }  
     }
-    void OnCollisionStay2D(Collision2D coll)
+    void OnCollisionEnter2D(Collision2D coll)
     {
-        if (coll.gameObject.tag == "Player" && health > 0 && playerDetected != null)
+        if(coll.gameObject.tag == "Ground")
         {
-            goingUpTimer = 0;
-            coll.gameObject.SendMessage("freeze", 3.3f);
-            upAttackingPos = playerDetected.transform.position;
-            attacking = true;
-            searching = false;
+            grounded = true;
+            GetComponent<Rigidbody2D>().isKinematic = true;
+            GetComponent<Animator>().Play("SlimeAttack");
         }
-        if (coll.gameObject.tag == "Ground")
+
+        if(coll.gameObject.tag == "Player" && firstDamageTimer > 0)
         {
-            goingDownTimer = 500;
+            coll.gameObject.SendMessage("BarryGotAttacked",30);
         }
+
 
     }
     void setRadius(GameObject enemy)
     {
-        enemy.GetComponent<EnemyDetector>().setNormalRadius(normalRadius);
-        enemy.GetComponent<EnemyDetector>().setTauntedRadius(tauntedRadius);
+        
     }
     void Hitted(float damage)
     {
-        blood.transform.position = transform.position;
-        damageMessagePopUp.transform.position = transform.position;
-        damageMessagePopUp.GetComponent<DamageMessagePopUpController>().setShowTime(0.5f);
-        if (firstAttacked)
-        {
-            health -= damage;
-            damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
-            
-
-
-            if (health > 0)
-            {
-                Instantiate(blood);
-                Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
-            }
-
-            if (playerDetected != null)
-            {
-                if (playerDetected.transform.position.x < transform.position.x)
-                {
-                    GetComponent<Rigidbody2D>().AddForce(Vector2.right * 7, ForceMode2D.Impulse);
-                }
-            }
-
-            else
-            {
-                GetComponent<Rigidbody2D>().AddForce(Vector2.left * 7, ForceMode2D.Impulse);
-            }
-            firstAttacked = false;
-            GetComponent<Rigidbody2D>().gravityScale = 1f;
-        }
-        else
-        {
-            Instantiate(blood);
-            if(!attacking)
-            {
-                damageMessagePopUp.GetComponent<TextMeshPro>().text = "BLOCKED!!";
-            }
-            
-            Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
-            GetComponent<Rigidbody2D>().AddForce(new Vector2(0.3f, 2) * 2, ForceMode2D.Impulse);
-            GetComponent<Rigidbody2D>().gravityScale = 0.4f;
-            firstAttacked = true;
-            firstAttackedTimer = 2f;
-        }
-
-
+        health -= damage;
+        hitted = true;
+        damageMessagePopUp.GetComponent<TextMeshPro>().text = (damage) + " ";
+        health -= (damage);            Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+        Instantiate(blood, transform.position + new Vector3(0, 0f, 0), Quaternion.identity);
     }
     void HittedByBow(float damage)
     {
-        Hitted(damage);
+        
     }
     void Die()
     {
-        if(attacking)
-        {
-                playerDetected.GetComponent<CapsuleCollider2D>().isTrigger = false;
-                transform.localScale = new UnityEngine.Vector3(2, 2f, 1);
-                playerDetected.transform.position = fixedPlayerPosition;
-                playerDetected.GetComponent<Rigidbody2D>().isKinematic = false;
-        }
-        Destroy(this.gameObject);
+       Destroy(gameObject);
+       tears.GetComponent<TearsController>().currentValue = 0;
+       tears.GetComponent<TearsController>().finalValue = 44;
+       Instantiate(tears, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+    }
+    void SlimeChargingAttackEnd()
+    {
+
     }
 }

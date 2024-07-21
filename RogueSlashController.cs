@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RogueSlashController : MonoBehaviour
 {
+    public float damage;
     private float microDamageTimer;
 
     // Start is called before the first frame update
@@ -24,15 +25,14 @@ public class RogueSlashController : MonoBehaviour
     {
         Destroy(gameObject);
     }
-    void OnTriggerEnter2D(Collider2D col)
+    void OnTriggerStay2D(Collider2D col)
     {
         if(col.gameObject.tag == "Player")
         {
             if(microDamageTimer <= 0)
             {
                 microDamageTimer = 0.2f;
-                col.gameObject.SendMessage("microDamage", 10);
-                Destroy(gameObject);
+                col.gameObject.SendMessage("microDamage", damage);
             }
         }
     }
