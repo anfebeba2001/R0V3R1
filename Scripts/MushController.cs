@@ -11,8 +11,7 @@ public class MushController : MonoBehaviour
     private bool taunted;
     private GameObject playerDetected;
     private GameObject damageMessagePopUp;
-    private Vector3 originalPos;
-    private bool escapingOnLeft;
+
     private bool searching;
     private bool attacking;
 
@@ -29,88 +28,56 @@ public class MushController : MonoBehaviour
     public float runningAwayLimit;
     public GameObject colliderHelper;
     private GameObject detector;
-    private bool escaping;
+    private GameObject tears;
     private float microDamageTimer;
-
-    public bool triggerlyCanBeAttacked;
     private GameObject blood;
     private bool parried;
+    private bool hitted;
 
 
     // Start is called before the first frame update
     void Start()
-    {
-        originalPos = transform.position;
+    {      
+        tears = GetComponent<EnemyController>().getTears();
         blood = GetComponent<EnemyController>().getBlood();
         damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
-        escapingOnLeft = true;
     }
 
     // Update is called once per frame
     void Update()
     {
+        hitted = GetComponent<EnemyController>().getHitted();
+        if(hitted)
+        {
+            GetComponent<EnemyController>().cancelHitted();
+            Hitted(GetComponent<EnemyController>().getDamageReceived());
+        }
         if (microDamageTimer > 0)
         {
             microDamageTimer -= Time.deltaTime;
         }
-        if (playerDetected != null)
-        {
-            if (Mathf.Abs(playerDetected.transform.position.x - transform.position.x) >= 1.2f)
-            {
-                triggerlyCanBeAttacked = false;
-            }
-            else
-            {
-                triggerlyCanBeAttacked = true;
-            }
-        }
+      
         if (health <= 0)
         {
             GetComponent<Animator>().Play("MushDying");
-            colliderHelper.GetComponent<BoxCollider2D>().isTrigger = true;
-            escaping = false;
-            transform.position = new Vector3(transform.position.x, originalPos.y, transform.position.z);
         }
         if (health <= runningAwayLimit && health > 0)
         {
             detector.GetComponent<EnemyDetector>().setNormalRadius(normalRadius);
-            escaping = true;
             taunted = false;
             attacking = false;
             searching = false;
-            GetComponent<Animator>().Play("MushIdle");
-            transform.position = new Vector3(transform.position.x, originalPos.y - 0.9f, transform.position.z);
-            colliderHelper.GetComponent<BoxCollider2D>().isTrigger = true;
-            if (escaping)
-            {
-                if (escapingOnLeft)
-                {
-                    transform.position = new Vector3(transform.position.x + 0.016f * 2.8f, transform.position.y, transform.position.z);
-                    if (transform.position.x > maxDistance)
-                    {
-                        escapingOnLeft = false;
-                    }
-                }
-                else
-                {
-                    transform.position = new Vector3(transform.position.x - 0.016f * 2.8f, transform.position.y, transform.position.z);
-                    if (transform.position.x < minDistance)
-                    {
-                        escapingOnLeft = true;
-                    }
-                }
-            }
+            GetComponent<Animator>().Play("MushIdle");                
         }
 
 
-        //taunted = GetComponentInParent<EnemyController>().getTaunted();
-        if (!taunted && !escaping && health > 0)
+        taunted = GetComponentInParent<EnemyController>().getTaunted();
+        if (!taunted && health > 0)
         {
             GetComponent<Animator>().Play("MushIdle");
         }
-        if (taunted && !searching && !attacking && !escaping)
+        if (taunted && !searching && !attacking)
         {
-
             searching = true;
             playerDetected = GetComponentInParent<EnemyController>().getPlayerDetected();
         }
@@ -120,11 +87,11 @@ public class MushController : MonoBehaviour
             if (playerDetected.transform.position.x > transform.position.x && GetComponent<Rigidbody2D>().velocity.x < maxVel)
             {
                 GetComponent<Rigidbody2D>().AddForce(UnityEngine.Vector2.right * speed, ForceMode2D.Force);
-                transform.localScale = new Vector3(3, 3, 3);
+                transform.localScale = new Vector3(5.6f, 5.6f, 5.6f);
             }
             else if (playerDetected.transform.position.x < transform.position.x && GetComponent<Rigidbody2D>().velocity.x > -maxVel)
             {
-                transform.localScale = new Vector3(-3, 3, 3);
+                transform.localScale = new Vector3(-5.6f, 5.6f, 5.6f);
                 GetComponent<Rigidbody2D>().AddForce(Vector2.left * speed, ForceMode2D.Force);
             }
         }
@@ -154,16 +121,9 @@ public class MushController : MonoBehaviour
     {
         if (coll.gameObject.tag == "Player" && searching)
         {
-
             searching = false;
             attacking = true;
-
-        }
-        if (coll.gameObject.tag == "BarryCurrentSword" && escaping)
-        {
-            Hitted(20);
-        }
-
+        }     
     }
     void OnTriggerStay2D(Collider2D coll)
     {
@@ -217,17 +177,12 @@ public class MushController : MonoBehaviour
     }
     void Hitted(float damage)
     {
-        if (triggerlyCanBeAttacked)
-        {
+        
             blood.transform.position = transform.position;
             damageMessagePopUp.transform.position = transform.position;
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().setShowTime(0.5f);
             if (parried)
             {
-                blood.transform.localScale = new Vector3(2.5f,2.5f , 3);
-                damageMessagePopUp.transform.localScale = new Vector3(
-                damageMessagePopUp.transform.localScale.x * 3, damageMessagePopUp.transform.localScale.y *3, 3);
-
                 damageMessagePopUp.GetComponent<TextMeshPro>().text = "CRITICAL!!! ";
                 ParriedEnd();
                 if (playerDetected.transform.position.x < transform.position.x)
@@ -240,18 +195,12 @@ public class MushController : MonoBehaviour
                 }
                 Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
                 
-                 damageMessagePopUp.transform.localScale = new Vector3(damageMessagePopUp.transform.localScale.x / 3, damageMessagePopUp.transform.localScale.y /3, 3);
-
+               
                 damageMessagePopUp.GetComponent<TextMeshPro>().text = ((damage * 3 )- defense) + "";
                 health -= ((damage * 3 )- defense) ;
-                damageMessagePopUp.transform.localScale = new Vector3(
-                    damageMessagePopUp.transform.localScale.x * 2, damageMessagePopUp.transform.localScale.y *2, 3);
-
+            
                 Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
                 Instantiate(blood, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
-                 blood.transform.localScale = new Vector3(1f,1f , 3);
-                damageMessagePopUp.transform.localScale = new Vector3(
-                    damageMessagePopUp.transform.localScale.x / 2, damageMessagePopUp.transform.localScale.y /2, 3);
             }
             else
             {
@@ -270,7 +219,7 @@ public class MushController : MonoBehaviour
                     GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
                 }
             }
-        }
+        
 
     }
     void HittedByBow(float damage)
@@ -303,7 +252,11 @@ public class MushController : MonoBehaviour
     }
     void finishDying()
     {
-        Destroy(gameObject);
+     
+       tears.GetComponent<TearsController>().currentValue = 0;
+       tears.GetComponent<TearsController>().finalValue = 44;
+       Instantiate(tears, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+       Destroy(gameObject);
     }
 
 }

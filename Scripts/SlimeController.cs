@@ -74,10 +74,6 @@ public class SlimeController : MonoBehaviour
 
 
     }
-    void setRadius(GameObject enemy)
-    {
-        
-    }
     void Hitted(float damage)
     {
         health -= damage;
@@ -88,7 +84,7 @@ public class SlimeController : MonoBehaviour
     }
     void HittedByBow(float damage)
     {
-        
+        Hitted(damage);
     }
     void Die()
     {
@@ -96,9 +92,5 @@ public class SlimeController : MonoBehaviour
        tears.GetComponent<TearsController>().currentValue = 0;
        tears.GetComponent<TearsController>().finalValue = 44;
        Instantiate(tears, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
-    }
-    void SlimeChargingAttackEnd()
-    {
-
     }
 }
