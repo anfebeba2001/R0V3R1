@@ -1,8 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
+using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class MushController : MonoBehaviour
 {
@@ -18,8 +22,6 @@ public class MushController : MonoBehaviour
     public float maxDistance;
     public float minDistance;
     private float damage = 80;
-    private float speed = 10f;
-    private float maxVel = 2.8f;
     private float attackCoolDown;
     private float defense = 10;
     private float health = 70;
@@ -54,11 +56,14 @@ public class MushController : MonoBehaviour
         }
         if (microDamageTimer > 0)
         {
+            GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
             microDamageTimer -= Time.deltaTime;
         }
       
         if (health <= 0)
         {
+            GetComponent<Rigidbody2D>().isKinematic = true;
+            GetComponent<BoxCollider2D>().isTrigger = true;
             GetComponent<Animator>().Play("MushDying");
         }
         if (health <= runningAwayLimit && health > 0)
@@ -81,24 +86,24 @@ public class MushController : MonoBehaviour
             searching = true;
             playerDetected = GetComponentInParent<EnemyController>().getPlayerDetected();
         }
-        if (taunted && searching && !attacking && attackCoolDown <= 0 && !parried)
+        if (taunted && searching && !attacking && attackCoolDown <= 0 && !parried && health > 0)
         {
             GetComponent<Animator>().Play("MushRun");
-            if (playerDetected.transform.position.x > transform.position.x && GetComponent<Rigidbody2D>().velocity.x < maxVel)
+            if (playerDetected.transform.position.x > transform.position.x)
             {
-                GetComponent<Rigidbody2D>().AddForce(UnityEngine.Vector2.right * speed, ForceMode2D.Force);
+                GetComponent<Rigidbody2D>().velocity = new Vector2(2,GetComponent<Rigidbody2D>().velocity.y);
                 transform.localScale = new Vector3(5.6f, 5.6f, 5.6f);
             }
-            else if (playerDetected.transform.position.x < transform.position.x && GetComponent<Rigidbody2D>().velocity.x > -maxVel)
+            else if (playerDetected.transform.position.x < transform.position.x)
             {
                 transform.localScale = new Vector3(-5.6f, 5.6f, 5.6f);
-                GetComponent<Rigidbody2D>().AddForce(Vector2.left * speed, ForceMode2D.Force);
+                GetComponent<Rigidbody2D>().velocity = new Vector2(-2,GetComponent<Rigidbody2D>().velocity.y);
             }
         }
         if (!searching && attacking && !finishingAttack && attackCoolDown <= 0 && health > 0 && !parried)
         {
             GetComponent<Animator>().Play("MushAttack");
-            throwAwayForce = 3f;
+            throwAwayForce = 2f;
             damage = 30;
         }
         if (attackCoolDown > 0 && health > 0)
@@ -172,7 +177,7 @@ public class MushController : MonoBehaviour
     void beginAttack()
     {
         finishingAttack = true;
-        throwAwayForce = 5f;
+        throwAwayForce = 3f;
         damage = 80;
     }
     void Hitted(float damage)

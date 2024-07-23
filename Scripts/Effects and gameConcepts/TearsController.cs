@@ -19,6 +19,7 @@ public class TearsController : MonoBehaviour
     {
         currentValue = 0;
         player = GameObject.FindGameObjectWithTag("Player");
+        player.GetComponent<BarryController>().addTears(finalValue);
         goingUpTimer = 3f;
         justShowingTimer = 3;
     }
@@ -52,7 +53,7 @@ public class TearsController : MonoBehaviour
             }
             else
             {
-                player.GetComponent<BarryController>().addTears(finalValue);
+                
                 Destroy(gameObject);
             }
         }

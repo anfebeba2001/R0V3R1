@@ -16,6 +16,8 @@ public class SlimeController : MonoBehaviour
     private bool grounded;
     private bool hitted;
     private float firstDamageTimer;
+    public float bottomLimitFallDown;
+    private float fixedBarryCoolDownAttack;
 
     void Start()
     {
@@ -46,30 +48,63 @@ public class SlimeController : MonoBehaviour
         }
         if(asleep)
         {
-            if(player.transform.position.x < transform.position.x + 0.8f && player.transform.position.x > transform.position.x - 0.8f ) 
+            if(player.transform.position.x < transform.position.x + 0.8f &&
+               player.transform.position.x > transform.position.x - 0.8f &&
+               player.transform.position.y > transform.position.y - bottomLimitFallDown &&
+               player.transform.position.y < transform.position.y ) 
             {
                 transform.localScale = new Vector3(transform.localScale.x,-transform.localScale.y,transform.localScale.x);
                 asleep = false;
+                GetComponent<Rigidbody2D>().gravityScale = 3f;
                 GetComponent<Rigidbody2D>().isKinematic = false;
+                
             }
         }
         if(grounded && firstDamageTimer > 0)
         {
             firstDamageTimer -= Time.deltaTime;
         }  
+        if(!asleep && !grounded)
+        {
+            if(fixedBarryCoolDownAttack > 0)
+            {
+                fixedBarryCoolDownAttack -= Time.deltaTime;
+                GetComponent<CircleCollider2D>().isTrigger = true;
+            }
+            else
+            {
+                GetComponent<CircleCollider2D>().isTrigger = false;
+            }
+        }
+        
     }
-    void OnCollisionEnter2D(Collision2D coll)
+    void OnTriggerEnter2D(Collider2D coll)
     {
+        
+    }
+    void OnCollisionStay2D(Collision2D coll)
+    {
+        
+        
         if(coll.gameObject.tag == "Ground")
         {
-            grounded = true;
             GetComponent<Rigidbody2D>().isKinematic = true;
+            GetComponent<CircleCollider2D>().isTrigger = true;
+            grounded = true;
+
             GetComponent<Animator>().Play("SlimeAttack");
         }
 
         if(coll.gameObject.tag == "Player" && firstDamageTimer > 0)
         {
+            
+            if (coll.gameObject.transform.position.x > transform.position.x)
+                coll.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.right, ForceMode2D.Impulse);
+            else
+                coll.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
             coll.gameObject.SendMessage("BarryGotAttacked",30);
+            
+            fixedBarryCoolDownAttack = 0.2f;
         }
 
 
@@ -79,7 +114,8 @@ public class SlimeController : MonoBehaviour
         health -= damage;
         hitted = true;
         damageMessagePopUp.GetComponent<TextMeshPro>().text = (damage) + " ";
-        health -= (damage);            Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+        health -= (damage);
+        Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
         Instantiate(blood, transform.position + new Vector3(0, 0f, 0), Quaternion.identity);
     }
     void HittedByBow(float damage)

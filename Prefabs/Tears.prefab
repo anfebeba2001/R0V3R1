@@ -153,7 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 7424121426136019067}
-  finalValue: 4000
+  currentValue: 0
+  finalValue: 0
 --- !u!1 &7424121426136019067
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class FireBallScript : MonoBehaviour
 {
-    private Rigidbody2D rigidbody2D;
+    private new Rigidbody2D rigidbody2D;
     private GameObject player;
     private Vector2 direction;
     private float timeLife = 2f;
     private float damage = 10;
     private float speed = 0.07f;
-    private float maxVel = 1f;
     private bool chasing;
     // Start is called before the first frame update
     void Start()

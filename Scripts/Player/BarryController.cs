@@ -16,10 +16,11 @@ public class BarryController : MonoBehaviour
 {
     public GameObject leftButton;
     public GameObject rightButton;
+    public Sprite upButtonSprite;
     public float speed;
     private float powerAttack = 25;
     public float jumpingForce = 2.5f;
-    private int healingVials = 3;
+    private int healingVials;
     private int arrows = 10;
     public float dashForce;
     private bool firstAttack;
@@ -31,14 +32,13 @@ public class BarryController : MonoBehaviour
 
     private bool canMove;
 
-    private Rigidbody2D rigidbody2D;
+    private new Rigidbody2D rigidbody2D;
     private Animator animator;
     private CapsuleCollider2D capsuleCollider2D;
     private bool grounded;
     private bool frozen;
     private bool attacking;
     private bool running;
-    private bool readyToAttack;
     private float attackCoolDown = 0;
     private float comboAttackTimer = 0;
     private float healingCoolDown;
@@ -71,9 +71,12 @@ public class BarryController : MonoBehaviour
     private float healthButtonValue;
     private float attackButtonValue;
     private float bowButtonValue;
+    private float dashButtonValue;
     private Vector3[] originalButtonPosition = new Vector3[2];
+    private Quaternion[] originalButtonRotation = new Quaternion[2];
     [SerializeField] private InputActionReference moveActionToUse;
     [SerializeField] private InputActionReference jumpActionToUse;
+    [SerializeField] private InputActionReference dashActionToUse;
     [SerializeField] private InputActionReference attackActionToUse;
     [SerializeField] private InputActionReference bowActionToUse;
     [SerializeField] private InputActionReference healthActionToUse;
@@ -81,12 +84,17 @@ public class BarryController : MonoBehaviour
     private bool laddering;
     private float ladderingCoolDown;
     private bool fightingBossBool;
+    private bool alreadySavedTearsCrystal;
 
     void Start()
     {
-        
+        alreadySavedTearsCrystal = false;   
         originalButtonPosition[0] = rightButton.transform.position;
         originalButtonPosition[1] = leftButton.transform.position;
+        originalButtonRotation[0] = rightButton.transform.rotation;
+        originalButtonRotation[0] = leftButton.transform.rotation;
+
+
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         maxHealth = 1000;
         maxStamina = 100;
@@ -98,7 +106,7 @@ public class BarryController : MonoBehaviour
         freeState = true;
 
         initialGravity = rigidbody2D.gravityScale;
-
+        healingVials = 5;
         coroutineFAT = FirstAirAttack();
         coroutineSAT = SecondAirAttack();
         canMove = true;
@@ -107,10 +115,21 @@ public class BarryController : MonoBehaviour
 
     void FixedUpdate()
     {
+        
 
         if(health <= 0)
         {
             animator.Play("BarryDead");
+            if(!alreadySavedTearsCrystal)
+            {
+                alreadySavedTearsCrystal = true;
+                float[] positionForTears = new float[3];
+                positionForTears[0] = transform.position.x;
+                positionForTears[1] = transform.position.y;
+                positionForTears[2] = transform.position.z;
+                SaveManager.saveDroppenTearsData(currentTears,positionForTears);
+                currentTears = 0;
+            }
         }
         
         moveDirection = moveActionToUse.action.ReadValue<UnityEngine.Vector2>();
@@ -118,6 +137,7 @@ public class BarryController : MonoBehaviour
         attackButtonValue = attackActionToUse.action.ReadValue<float>();
         bowButtonValue = bowActionToUse.action.ReadValue<float>();
         healthButtonValue = healthActionToUse.action.ReadValue<float>();
+        dashButtonValue = dashActionToUse.action.ReadValue<float>();
 
 
         if (frozen || hurt || health<=0 || isBowing || isDashing || laddering)
@@ -138,7 +158,7 @@ public class BarryController : MonoBehaviour
             Jump();
 
             //Dash
-            if(Input.GetKey(KeyCode.C) && dashCoolDown <= 0 && !isDashing && groundTouched){
+            if((Input.GetKey(KeyCode.C) || dashButtonValue == 1) && dashCoolDown <= 0 && !isDashing && groundTouched ){
                 StartCoroutine(Dash());
             }
             
@@ -148,17 +168,17 @@ public class BarryController : MonoBehaviour
             ThirdAttack();
 
             //AirAttacking
-            if (Input.GetKey(KeyCode.X) && !grounded && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
+            if ((Input.GetKey(KeyCode.X) || attackButtonValue == 1) && !grounded && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
             {
                 StartCoroutine(FirstAirAttack());
             }
 
-            if (Input.GetKey(KeyCode.X) && !grounded && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+            if ((Input.GetKey(KeyCode.X) || attackButtonValue == 1) && !grounded && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
             {
                 StartCoroutine(SecondAirAttack());
             }
 
-            if (Input.GetKey(KeyCode.X) && !grounded && !firstAttack && secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+            if ((Input.GetKey(KeyCode.X) || attackButtonValue == 1) && !grounded && !firstAttack && secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
             {
                 ThirdAirAttack();
             }
@@ -190,13 +210,11 @@ public class BarryController : MonoBehaviour
         //  //Attack
         if (attackCoolDown > 0)
         {
-            readyToAttack = false;
             attackCoolDown -= Time.deltaTime;
         }
         else
         {
             attacking = false;
-            readyToAttack = true;
         }
         //  //Freeze
         if (freezeTimer > 0)
@@ -300,8 +318,8 @@ public class BarryController : MonoBehaviour
                 GetComponent<Rigidbody2D>().isKinematic = true;      
                 rightButton.transform.position = leftButton.transform.position;
                 rightButton.transform.position += new Vector3(0,1,0)*270;
-                rightButton.transform.rotation = new quaternion(0, 0, 180 , 0);
-                leftButton.transform.rotation = new quaternion(0, 0, 0 , 0);
+                leftButton.transform.rotation = new quaternion(0, 0, 180 , 0);
+                rightButton.transform.rotation = new quaternion(0, 0, 0 , 0);
             }
         }
     }
@@ -310,8 +328,8 @@ public class BarryController : MonoBehaviour
         if(col.gameObject.tag == "Ladder")
         {
             laddering = false;
-            rightButton.transform.rotation = quaternion.Euler(0,0,-67.5f);
-            leftButton.transform.rotation = quaternion.Euler(0,0,67.5f);
+            leftButton.transform.rotation =  Quaternion.Euler(0, 0, -270);
+            rightButton.transform.rotation =  Quaternion.Euler(0, 0, 270);
             rightButton.transform.position = originalButtonPosition[0];
             leftButton.transform.position = originalButtonPosition[1];
             GetComponent<Animator>().Play("BarryRuns");
@@ -350,7 +368,7 @@ public class BarryController : MonoBehaviour
             }
 
         }
-        else if(!(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)))
+        else if(!(Input.GetKey(KeyCode.A) || moveDirection.x != 0 ||Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)))
         {
             animator.SetBool("Running", false);
             rigidbody2D.velocity = new Vector2(0, rigidbody2D.velocity.y);
@@ -392,7 +410,7 @@ public class BarryController : MonoBehaviour
     private void FirstAttack(){
 
 
-        if (Input.GetKey(KeyCode.X) && grounded && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
+        if ((Input.GetKey(KeyCode.X) || attackButtonValue == 1) && grounded && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
         {
             animator.Play("BarryAttacks");
             attackCoolDown = 0.9f;
@@ -404,7 +422,7 @@ public class BarryController : MonoBehaviour
     }
 
     private void SecondAttack(){
-        if (Input.GetKey(KeyCode.X) && grounded && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        if ((Input.GetKey(KeyCode.X) || attackButtonValue == 1) && grounded && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
         {
             animator.Play("BarryAttack2");
             comboAttackTimer = 0;
@@ -417,7 +435,7 @@ public class BarryController : MonoBehaviour
     }
 
     private void ThirdAttack(){
-        if (Input.GetKey(KeyCode.X) && grounded && !firstAttack && secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        if ((Input.GetKey(KeyCode.X) || attackButtonValue == 1) && grounded && !firstAttack && secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
         {
             animator.Play("BarryAttack3");
             attackCoolDown = 0.9f;
@@ -430,7 +448,7 @@ public class BarryController : MonoBehaviour
     }
 
     private IEnumerator FirstAirAttack(){
-        if (Input.GetKey(KeyCode.X) && !grounded && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
+        if ((Input.GetKey(KeyCode.X) || attackButtonValue == 1) && !grounded && !firstAttack && !secondAttack && !thirdAttack && attackCoolDown <= 0)
         {
             canMove = false;
             firstAttack = true;
@@ -450,7 +468,7 @@ public class BarryController : MonoBehaviour
     }
 
     private IEnumerator SecondAirAttack(){
-        if (Input.GetKey(KeyCode.X) && !grounded && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
+        if ((Input.GetKey(KeyCode.X) || attackButtonValue == 1) && !grounded && firstAttack && !secondAttack && !thirdAttack && (comboAttackTimer >= 0.5f) && (comboAttackTimer <= 0.8f))
         {
             canMove = false;
             firstAttack = false;

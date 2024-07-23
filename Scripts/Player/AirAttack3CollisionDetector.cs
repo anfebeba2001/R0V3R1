@@ -14,7 +14,6 @@ public class AirAttack3CollisionDetector : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D coll) {
-        Debug.Log(coll.name);
         if((coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Skeleton" || coll.gameObject.tag == "Ground") && !player.GetComponent<BarryController>().getGrounded() && player.GetComponent<BarryController>().getThirdAttack()){
             StartCoroutine(player.GetComponent<BarryController>().ThirdAirAttackEnd());
         }
