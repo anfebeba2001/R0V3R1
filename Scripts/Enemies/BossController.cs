@@ -23,6 +23,7 @@ public class BossController : MonoBehaviour
     {
         taunted = false;        
         player = GameObject.FindGameObjectWithTag("Player");
+        dialogHandler= GameObject.FindGameObjectWithTag("DialogHelper");
     }
 
     // Update is called once per frame
@@ -39,20 +40,20 @@ public class BossController : MonoBehaviour
             enemyHealthLifeBar.gameObject.SetActive(true);
             player.SendMessage("fightingBoss",true);
             taunted = true;
-        }
-
-        if(dialogTimer > 0)
+            if(dialogTimer > 0)
         {
             dialogTimer -= Time.deltaTime;
         }
         else{
-            dialogHandler.SetActive(false);
+            dialogHandler.GetComponent<TextMeshProUGUI>().text = "";
         }
+        }
+
+        
     }
     public void dialog(string phrase)
     {
         dialogTimer = 1.5f;
-        dialogHandler.SetActive(true);
         dialogHandler.GetComponent<Animator>().Play("DialogBeginning");
         switch(phrase)
         {

@@ -8,10 +8,12 @@ public class BarrySwordAttackController : MonoBehaviour
     private GameObject parent;
     private GameObject mainCamera;
     private float attackCoolDown;
+    private GameObject buffsHelper;
 
     // Start is called before the first frame update
     void Start()
     {
+        buffsHelper = GameObject.FindGameObjectWithTag("BuffsHelper");
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         parent = gameObject.transform.parent.gameObject;
     }
@@ -44,6 +46,10 @@ public class BarrySwordAttackController : MonoBehaviour
             coll.gameObject.GetComponent<EnemyController>().Hitted(damage);
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.1f;
             attackCoolDown = 0f;
+            
+
+
+            buffsHelper.GetComponent<BuffsOnBarryHelper>().AttackingAnEnemy();
         }
 
     }

@@ -426,6 +426,50 @@ PolygonCollider2D:
       - {x: 0.20294374, y: 0.13721201}
       - {x: 0.08421527, y: 0.18385684}
   m_UseDelaunayMesh: 0
+--- !u!1 &2077828555425243854
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7891973297188713723}
+  - component: {fileID: 5213769909857996108}
+  m_Layer: 0
+  m_Name: SceneTraveler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7891973297188713723
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2077828555425243854}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5007219636398204147}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5213769909857996108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2077828555425243854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c98ddcc5ffd92e54bb7bbac14e6ddc8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2403433865211717892
 GameObject:
   m_ObjectHideFlags: 0
@@ -471,6 +515,7 @@ Transform:
   - {fileID: 1624581829084618}
   - {fileID: 7773808043353824618}
   - {fileID: 7758172527303603991}
+  - {fileID: 7891973297188713723}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -8.252, z: 0}
 --- !u!212 &3421761054693542894
@@ -601,15 +646,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftButton: {fileID: 0}
   rightButton: {fileID: 0}
+  upButtonSprite: {fileID: 0}
   speed: 20
   jumpingForce: 2.5
   dashForce: 0
+  currentTears: 0
   damageMessagePopUp: {fileID: 2574931633462917792, guid: c058d2f08b9c7da4ea121283b39d3fc0, type: 3}
   arrowPrefab: {fileID: 8677834792987813017, guid: c44b4fb36ee2cb44fa53f3e007e6ad9a, type: 3}
   maxSpeed: 5
   dashTime: 0.4
+  sceneTravelerController: {fileID: 5213769909857996108}
   moveActionToUse: {fileID: 5788472268530232851, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
   jumpActionToUse: {fileID: -2431413364244891814, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
+  dashActionToUse: {fileID: 6816748369695001979, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
   attackActionToUse: {fileID: 2030834687466303880, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
   bowActionToUse: {fileID: -465717585195250140, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
   healthActionToUse: {fileID: 4764711843418012354, guid: e70e396171ff9ea4d97ff5da843a441b, type: 3}
@@ -676,6 +725,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1772555cc7be4ed46bcc0dd7ce005950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tearsCrystal: {fileID: 0}
 --- !u!1 &2586950587202155996
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,6 +1134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1772555cc7be4ed46bcc0dd7ce005950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tearsCrystal: {fileID: 0}
 --- !u!1 &6460763972603266191
 GameObject:
   m_ObjectHideFlags: 0

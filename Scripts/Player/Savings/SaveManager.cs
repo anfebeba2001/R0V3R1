@@ -30,4 +30,33 @@ public static class SaveManager
         else 
             return null;
     }
+
+    public static void savePlayerData(int defense,int health, int damage, int resistance, int tears, int healingOrbs, int arrows, int costPerUpgrade)
+    {
+        PlayerData playerData = new PlayerData(defense,health,damage,resistance,tears,healingOrbs,arrows, costPerUpgrade);
+        string dataPath = Application.persistentDataPath + "/player.save";
+        FileStream fileStream = new FileStream(dataPath, FileMode.Create);
+        BinaryFormatter binaryFormatter = new BinaryFormatter();
+        binaryFormatter.Serialize(fileStream,playerData);
+        fileStream.Close();
+    }
+
+    public static PlayerData loadPlayerData()
+    {
+        string dataPath = Application.persistentDataPath + "/player.save";
+        if((File.Exists(dataPath)))
+        {    
+            FileStream fileStream = new FileStream(dataPath, FileMode.Open);
+            BinaryFormatter binaryFormatter = new BinaryFormatter(); 
+            fileStream.Position = 0;
+            PlayerData playerData = (PlayerData) binaryFormatter.Deserialize(fileStream);
+            fileStream.Close();
+            return playerData;
+        }
+        else 
+            return null;
+    }
+
+
+
 }

@@ -14,21 +14,23 @@ using Vector3 = UnityEngine.Vector3;
 
 public class BarryController : MonoBehaviour
 {
-    public GameObject leftButton;
-    public GameObject rightButton;
+    private GameObject leftButton;
+    private GameObject rightButton;
     public Sprite upButtonSprite;
     public float speed;
-    private float powerAttack = 25;
+    private int powerAttack = 25;
     public float jumpingForce = 2.5f;
     private int healingVials;
-    private int arrows = 10;
+    private int costPerUpgrade;
+    private int arrows;
     public float dashForce;
     private bool firstAttack;
     private bool secondAttack;
     private bool thirdAttack;
     private float freezeTimer;
     private bool groundTouched;
-    private int currentTears;
+    public int currentTears;
+    private GameObject buffsHelper;
 
     private bool canMove;
 
@@ -44,8 +46,10 @@ public class BarryController : MonoBehaviour
     private float healingCoolDown;
     private float hurtCoolDown;
     private bool hurt;
-    private float maxHealth;
-    private float health;
+    private int defense;
+    private int maxHealth;
+    private int resistance;
+    private int health;
     private float stamina;
     private float maxStamina;
     public GameObject damageMessagePopUp;
@@ -66,12 +70,15 @@ public class BarryController : MonoBehaviour
     private IEnumerator coroutineFAT;
     private IEnumerator coroutineSAT;
 
+    public int powerBoofModifier{get; private set;}
+
     private Vector2 moveDirection;
     private float jumpButtonValue;
     private float healthButtonValue;
     private float attackButtonValue;
     private float bowButtonValue;
     private float dashButtonValue;
+    public SceneTravelerController sceneTravelerController;
     private Vector3[] originalButtonPosition = new Vector3[2];
     private Quaternion[] originalButtonRotation = new Quaternion[2];
     [SerializeField] private InputActionReference moveActionToUse;
@@ -85,9 +92,37 @@ public class BarryController : MonoBehaviour
     private float ladderingCoolDown;
     private bool fightingBossBool;
     private bool alreadySavedTearsCrystal;
+    private int defenseBoofModifier;
 
     void Start()
     {
+        buffsHelper = GameObject.FindGameObjectWithTag("BuffsHelper");
+        rightButton = GameObject.FindGameObjectWithTag("RightButton");
+        leftButton = GameObject.FindGameObjectWithTag("LeftButton");
+        PlayerData loadedPlayerData =  SaveManager.loadPlayerData();
+        if(loadedPlayerData != null)
+        {
+            
+            maxHealth = loadedPlayerData.health;
+            resistance = loadedPlayerData.resistance;
+            defense = loadedPlayerData.defense;
+            powerAttack = loadedPlayerData.damage;
+            arrows = loadedPlayerData.arrows;
+            healingVials = loadedPlayerData.healingOrbs;
+            costPerUpgrade = loadedPlayerData.costPerUpgrade;
+            currentTears = loadedPlayerData.tears;
+        }
+        else
+        {
+            maxHealth = 1000;
+            resistance = 70;
+            defense = 10;
+            powerAttack = 30;
+            arrows = 5;
+            healingVials = 5;
+            costPerUpgrade = 800;
+            currentTears = 0;
+        }
         alreadySavedTearsCrystal = false;   
         originalButtonPosition[0] = rightButton.transform.position;
         originalButtonPosition[1] = leftButton.transform.position;
@@ -96,8 +131,8 @@ public class BarryController : MonoBehaviour
 
 
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        maxHealth = 1000;
-        maxStamina = 100;
+        
+        maxStamina = resistance*10 + 100;
         health = maxHealth;
         stamina = maxStamina;
         rigidbody2D = GetComponent<Rigidbody2D>();
@@ -106,7 +141,7 @@ public class BarryController : MonoBehaviour
         freeState = true;
 
         initialGravity = rigidbody2D.gravityScale;
-        healingVials = 5;
+        
         coroutineFAT = FirstAirAttack();
         coroutineSAT = SecondAirAttack();
         canMove = true;
@@ -129,6 +164,7 @@ public class BarryController : MonoBehaviour
                 positionForTears[2] = transform.position.z;
                 SaveManager.saveDroppenTearsData(currentTears,positionForTears);
                 currentTears = 0;
+                SaveManager.savePlayerData(defense,maxHealth,powerAttack,resistance,currentTears,healingVials,arrows,costPerUpgrade);
             }
         }
         
@@ -305,6 +341,28 @@ public class BarryController : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D col)
     {
+        if(col.gameObject.tag == "Door")
+        {
+            if((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || jumpButtonValue == 1))
+            {
+                col.GetComponent<DoorController>().transportBarry(gameObject);                
+            }
+        }
+        if(col.gameObject.tag == "WorldLadder")
+        {
+            if((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || jumpButtonValue == 1))
+            {
+                if(col.gameObject.name == "WorldLadder")
+                {
+                    sceneTravelerController.World();
+                }
+                else if(col.gameObject.name == "Purgatory")
+                {
+                    sceneTravelerController.Purgatory();
+                }
+                
+            }
+        }
         if(col.gameObject.tag == "Ladder" && !fightingBossBool)
         {
             if((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || jumpButtonValue == 1) && !laddering && !hurt && ladderingCoolDown <= 0)
@@ -379,6 +437,7 @@ public class BarryController : MonoBehaviour
         if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || jumpButtonValue == 1) && grounded
             && rigidbody2D.velocity.y == 0)
         {
+            buffsHelper.GetComponent<BuffsOnBarryHelper>().jumped();
             rigidbody2D.AddForce(Vector2.up * jumpingForce * 2, ForceMode2D.Impulse);
             animator.SetBool("Jumping", true);
         }
@@ -532,7 +591,7 @@ public class BarryController : MonoBehaviour
     {
         return health;
     }
-    public float getMaxHealth()
+    public int getMaxHealth()
     {
         return maxHealth;
     }
@@ -593,8 +652,17 @@ public class BarryController : MonoBehaviour
 
             }
             
-            health -= damage;
-            damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
+            if(damage > defense)
+            {
+                health -= (int)(damage - (defense + defenseBoofModifier));
+                damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
+            }
+            else
+            {
+                damageMessagePopUp.GetComponent<TextMeshPro>().text = 0 + "";
+            }
+            
+            
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().showingTimer = 0.5f;
             Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.2f;
@@ -607,7 +675,7 @@ public class BarryController : MonoBehaviour
         {
             damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().showingTimer = 0.5f;
-            health -= damage;
+            health -= (int)damage;
             Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.01f;
         }
@@ -617,11 +685,15 @@ public class BarryController : MonoBehaviour
     {
         return attacking;
     }
-    public float getPowerAttack()
+    public int getPowerAttack()
     {
         return powerAttack;
     }
 
+    public int getPowerAttackToMobs()
+    {
+        return powerAttack+powerBoofModifier;
+    }
     void instantiateArrow()
     {
         Vector3 direction;
@@ -655,9 +727,6 @@ public class BarryController : MonoBehaviour
     public float getMaxStamina(){
         return maxStamina;
     }
-    
-    
-
     public int getAttackState(){
         if(firstAttack){
             return 1;
@@ -669,7 +738,6 @@ public class BarryController : MonoBehaviour
             return 3;
         }
     }
-
     public void addTears(int tearsIncoming)
     {
         currentTears += tearsIncoming;
@@ -681,5 +749,86 @@ public class BarryController : MonoBehaviour
     void fightingBoss()
     {
         fightingBossBool = true;
+    }
+    public int getCostPerUpgrade()
+    {
+        return costPerUpgrade;
+    }
+
+    public void setHealth(int maxHealth)
+    {
+        this.maxHealth = maxHealth;
+    }
+
+    public int getDefense()
+    {
+        return defense;
+    }
+
+    public int getResistance()
+    {
+        return resistance;
+    }
+
+    internal void setPowerAttack(int powerAttack)
+    {
+        this.powerAttack = powerAttack;
+    }
+
+    internal void setDefense(int defense)
+    {
+        this.defense = defense;
+    }
+
+    internal void setResistance(int resistance)
+    {
+        this.resistance = resistance;
+    }
+
+    internal void setCurrentTears(int currentTears)
+    {
+        this.currentTears = currentTears;
+    }
+
+    internal void setCostPerUpgrade(int costPerUpgrade)
+    {
+        this.costPerUpgrade = costPerUpgrade;
+    }
+
+    internal void setHealingVials(int healingVials)
+    {
+        this.healingVials = healingVials;
+    }
+    internal void setNumberOfArrows(int arrows)
+    {
+        this.arrows = arrows;
+    }
+
+    internal void heal(int amount)
+    {
+        if(health < maxHealth - amount)
+        {
+            health += (int)amount;
+            damageMessagePopUp.GetComponent<TextMeshPro>().text = "+" + amount + "";
+            damageMessagePopUp.GetComponent<DamageMessagePopUpController>().showingTimer = 0.5f;
+            Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+        }
+    }
+
+    internal void setPowerBoofModifier(int powerBoofModifier)
+    {
+        this.powerBoofModifier = powerBoofModifier;
+    }
+    internal int getPowerBoofModifier( )
+    {
+        return powerBoofModifier;
+    }
+    internal void setDefenseBoofModifier(int defenseBoofModifier)
+    {
+        this.defenseBoofModifier = defenseBoofModifier;
+    }
+    internal int getDefenseBoofModifier( )
+    {
+        return defenseBoofModifier;
     }
 }

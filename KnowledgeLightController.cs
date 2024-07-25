@@ -6,10 +6,11 @@ using UnityEngine;
 public class KnowledgeLightController : MonoBehaviour
 {
     public string knowledge;
-    public GameObject text;
+    private GameObject text;
     void Start()
     {
-        text.SetActive(false);
+        text = GameObject.FindGameObjectWithTag("DialogHelper");
+        text.GetComponent<TextMeshProUGUI>().text = "";
     }
 
     // Update is called once per frame
