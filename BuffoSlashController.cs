@@ -13,9 +13,9 @@ public class BuffoSlashController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdateUpdate()
+    void FixedUpdate()
     {
-        transform.position += new Vector3(0.08f,0,0)*(transform.localScale.x/5);
+        transform.position = new Vector3(transform.position.x + (0.08f * transform.localScale.x/5),transform.position.y,transform.position.z);
         if(lifeTime > 0)
         {
             lifeTime -= Time.deltaTime;

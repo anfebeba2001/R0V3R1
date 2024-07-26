@@ -11,6 +11,7 @@ public class DoorController : MonoBehaviour
     public GameObject roomDoor;
     private static Vector3 positionToReturn;
     private GameObject buffsHelper;
+    public static float travelingCoolDown;
    
 
     
@@ -18,27 +19,36 @@ public class DoorController : MonoBehaviour
     void Start()
     {
         buffsHelper = GameObject.FindGameObjectWithTag("BuffsHelper");
+        positionToGo = roomDoor.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(travelingCoolDown > 0)
+        {
+            travelingCoolDown -= Time.deltaTime;
+        }
     }
-    internal void transportBarry(GameObject gameObject)
+    internal void transportBarry(GameObject barry)
     {
         if(onRoom || (!used && !onRoom))
         {
             if(!onRoom)
             {
                 used = true;
-                gameObject.transform.position = positionToGo;
+                barry.transform.position = positionToGo;
                 positionToReturn = transform.position;
                 buffsHelper.GetComponent<BuffsOnBarryHelper>().AddBuff();
+                travelingCoolDown = 2f;
             }
             else
             {
-                gameObject.transform.position = positionToReturn;
+                if(travelingCoolDown <= 0)
+                {
+                    barry.transform.position = positionToReturn;
+                }
+                
             }
         }
         

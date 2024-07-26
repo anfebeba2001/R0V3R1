@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Unity.VisualStudio.Editor;
+using TMPro;
 using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
@@ -15,8 +16,10 @@ public class BuffsOnBarryHelper : MonoBehaviour
     public Color unrevealedColor;
     public Color RevealedColor;
 
+    public GameObject buffoIdentifierEffect;
+
     public GameObject[] buffosScreen = new GameObject[4];
-    private bool[] buffos = new bool[16];
+    public bool[] buffos = new bool[16];
     public Sprite[] buffosSprites = new Sprite[16];
     private int buffoCounter;
 
@@ -24,26 +27,97 @@ public class BuffsOnBarryHelper : MonoBehaviour
     private float quietPlaceCoolDown;
     private Vector3 originalScale;
     private float injusticeCoolDown;
+    public GameObject text;
+    private string buffoText;
 
     internal void AddBuff()
     {
         int selection = Random.Range(1,1600);
-        if(buffos[selection%16])
+        selection = 18;
+
+        if(buffos[selection%16] ||  selection%16 == 7 || selection%16 == 12 || selection%16 == 13 ||  selection%16 == 14 ||  selection%16 == 15)
         {
             AddBuff();
         }
         else
         {
+            buffoIdentifierEffect.GetComponent<SpriteRenderer>().sprite = buffosSprites[selection%16];
+            switch(selection%16)
+            {
+                
+                case 0:
+                    buffoText = "BENDICIÓN - Sol ascendente: Genera un aura que quema a los enemigos progresivamente.";
+                break;
+                case 1:
+                    buffoText = "BENDICIÓN - Lugar calmado: Te curas cada cierto tiempo un porcentaje de tu vida máxima.";    
+                break;
+                case 2:
+                    buffoText = "BENDICIÓN - Resonancia: Genera cortes en el aire que aumentan el rango de tus ataques y traspasan enemigos.";    
+                break;
+                case 3:
+                    buffoText = "BENDICIÓN - Berserker: Aumenta un poco tu defensa y tu poder de ataque.";    
+                break;
+                case 4:
+                    buffoText = "BENDICIÓN - Sanguinario: Cuando atacas a un enemigo te curas un porcentaje de tu vida ";    
+                break;
+                case 5:
+                    buffoText = "BENDICIÓN - Mano firme: El daño que infliges  infringes  en un 30%.";    
+                break;
+                case 6:
+                    buffoText = "BENDICIÓN - Severo: El daño que recibes disminuye en un 30%.";    
+                break;
+                case 8:
+                    buffoText = "MALDICIÓN - Sollozante: El daño que recibes aumenta en un 20%.";    
+                break;
+                case 9:
+                    buffoText = "MALDICIÓN - Debilucho: El daño que infringes se reduce en 30%.";    
+                break;
+                case 10: 
+                    buffoText = "MALDICIÓN - Pies heridos: Por cada salto o desplazamiento rápido que utilices, pierdes una pequeña cantidad de vida";   
+                break;
+                case 11: 
+                    buffoText = "MALDICIÓN - Injusticia: Cada cierto tiempo pierdes un porcentaje de tu vida máxima";   
+                break;
+            }   
+            text.GetComponent<TextMeshProUGUI>().text = buffoText;
+
+            buffosScreen[0].GetComponent<UnityEngine.UI.Image>().color = RevealedColor;
             buffosScreen[buffoCounter].GetComponent<UnityEngine.UI.Image>().sprite = buffosSprites[selection%16];
             buffos[selection%16] = true;
             buffoCounter++;
+        }
+          if(buffos[3])
+        {
+            player.GetComponent<BarryController>().setPowerBoofModifier((int)(player.GetComponent<BarryController>().getPowerBoofModifier() + (player.GetComponent<BarryController>().getPowerAttack() * 0.2f )));
+            player.GetComponent<BarryController>().setDefenseBoofModifier((int)(player.GetComponent<BarryController>().getDefenseBoofModifier() + (player.GetComponent<BarryController>().getDefense() * 0.2f )));
+        }
+        if(buffos[5])
+        {
+            player.GetComponent<BarryController>().setPowerBoofModifier((int)(player.GetComponent<BarryController>().getPowerBoofModifier() + (player.GetComponent<BarryController>().getPowerAttack() * 0.8f )));
+        }
+        if(buffos[6])
+        {
+            player.GetComponent<BarryController>().setDefenseBoofModifier((int)(player.GetComponent<BarryController>().getDefenseBoofModifier() + (player.GetComponent<BarryController>().getDefense() * 0.8f )));
+        }
+        if(buffos[8])
+        {
+            player.GetComponent<BarryController>().setPowerBoofModifier((int)(player.GetComponent<BarryController>().getPowerBoofModifier() - (player.GetComponent<BarryController>().getPowerAttack() * 0.8f )));
+        }
+        if(buffos[9])
+        {
+            player.GetComponent<BarryController>().setDefenseBoofModifier((int)(player.GetComponent<BarryController>().getDefenseBoofModifier() + (player.GetComponent<BarryController>().getDefense() * 0.8f )));
         }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        text = GameObject.FindGameObjectWithTag("DialogHelper");
+        text.GetComponent<TextMeshProUGUI>().text = "";
+        buffosScreen[0].GetComponent<UnityEngine.UI.Image>().color = unrevealedColor;
+        buffosScreen[1].GetComponent<UnityEngine.UI.Image>().color = unrevealedColor;
+        buffosScreen[2].GetComponent<UnityEngine.UI.Image>().color = unrevealedColor;
+        buffosScreen[3].GetComponent<UnityEngine.UI.Image>().color = unrevealedColor;
         originalScale = transform.localScale;
         raisingSun.SetActive(false);
         buffoCounter = 0;
@@ -73,39 +147,16 @@ public class BuffsOnBarryHelper : MonoBehaviour
             }
             else
             {
-                quietPlaceCoolDown = 40f;
-                player.GetComponent<BarryController>().heal((int)(player.GetComponent<BarryController>().getMaxHealth()*0.18f));
+                quietPlaceCoolDown = 15f;
+                player.GetComponent<BarryController>().heal((int)(player.GetComponent<BarryController>().getMaxHealth()*0.04f));
             }
         }
-        if(buffos[2])
-        {
-            //Occuped
-        }
-        if(buffos[3])
-        {
-            player.GetComponent<BarryController>().setPowerBoofModifier((int)(player.GetComponent<BarryController>().getPowerBoofModifier() + (player.GetComponent<BarryController>().getPowerAttack() * 0.2f )));
-            player.GetComponent<BarryController>().setDefenseBoofModifier((int)(player.GetComponent<BarryController>().getDefenseBoofModifier() + (player.GetComponent<BarryController>().getDefense() * 0.2f )));
-        }
-        if(buffos[5])
-        {
-            player.GetComponent<BarryController>().setPowerBoofModifier((int)(player.GetComponent<BarryController>().getPowerBoofModifier() + (player.GetComponent<BarryController>().getPowerAttack() * 0.8f )));
-        }
-        if(buffos[6])
-        {
-            player.GetComponent<BarryController>().setDefenseBoofModifier((int)(player.GetComponent<BarryController>().getDefenseBoofModifier() + (player.GetComponent<BarryController>().getDefense() * 0.8f )));
-        }
+       
         if(buffos[7])
         {
 
         }
-        if(buffos[8])
-        {
-            player.GetComponent<BarryController>().setPowerBoofModifier((int)(player.GetComponent<BarryController>().getPowerBoofModifier() - (player.GetComponent<BarryController>().getPowerAttack() * 0.8f )));
-        }
-        if(buffos[9])
-        {
-            player.GetComponent<BarryController>().setDefenseBoofModifier((int)(player.GetComponent<BarryController>().getDefenseBoofModifier() + (player.GetComponent<BarryController>().getDefense() * 0.8f )));
-        }
+        
         if(buffos[11])
         {
             

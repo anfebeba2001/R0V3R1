@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 5858935399609134603}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -25.736557, y: -56.143764, z: -0.61}
+  m_LocalPosition: {x: -31.87596, y: -56.941204, z: 0}
   m_LocalScale: {x: 2.7819, y: 2.7819, z: 2.7819}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tears: {fileID: 3589435810816777824, guid: 8a647ffcdc28ce54c9c347a1b973fd0b, type: 3}
-  amount: 264
+  amount: 88
 --- !u!58 &5276794013920537709
 CircleCollider2D:
   m_ObjectHideFlags: 0
