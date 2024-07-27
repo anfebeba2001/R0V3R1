@@ -9,13 +9,13 @@ public class BuffoSlashController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        lifeTime = 0.8f;
+        lifeTime = 0.6f;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        transform.position = new Vector3(transform.position.x + (0.08f * transform.localScale.x/5),transform.position.y,transform.position.z);
+        transform.position = new Vector3(transform.position.x + (0.1f * transform.localScale.x/5),transform.position.y,transform.position.z);
         if(lifeTime > 0)
         {
             lifeTime -= Time.deltaTime;

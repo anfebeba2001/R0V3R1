@@ -12,21 +12,19 @@ public class MushController : MonoBehaviour
 {
     private float normalRadius = 1.5f;
     private float tauntedRadius = 3f;
-    private bool taunted;
+    public bool taunted;
     private GameObject playerDetected;
     private GameObject damageMessagePopUp;
 
-    private bool searching;
-    private bool attacking;
+    public bool searching;
+    public bool attacking;
 
-    public float maxDistance;
-    public float minDistance;
     private float damage = 80;
-    private float attackCoolDown;
+    public float attackCoolDown;
     private float defense = 10;
     private float health = 70;
     private float throwAwayForce;
-    private bool finishingAttack;
+    public bool finishingAttack;
     public float runningAwayLimit;
     public GameObject colliderHelper;
     private GameObject detector;
@@ -40,13 +38,14 @@ public class MushController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {      
+        health = 2;
         tears = GetComponent<EnemyController>().getTears();
         blood = GetComponent<EnemyController>().getBlood();
         damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         hitted = GetComponent<EnemyController>().getHitted();
         if(hitted)
@@ -56,17 +55,18 @@ public class MushController : MonoBehaviour
         }
         if (microDamageTimer > 0)
         {
-            GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
+            
             microDamageTimer -= Time.deltaTime;
         }
       
         if (health <= 0)
         {
+            GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
             GetComponent<Rigidbody2D>().isKinematic = true;
             GetComponent<BoxCollider2D>().isTrigger = true;
             GetComponent<Animator>().Play("MushDying");
         }
-        if (health <= runningAwayLimit && health > 0)
+        if (health <= runningAwayLimit && health > 0 && !taunted)
         {
             detector.GetComponent<EnemyDetector>().setNormalRadius(normalRadius);
             taunted = false;
@@ -124,6 +124,7 @@ public class MushController : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
+        
         if (coll.gameObject.tag == "Player" && searching)
         {
             searching = false;
@@ -186,7 +187,9 @@ public class MushController : MonoBehaviour
             blood.transform.position = transform.position;
             damageMessagePopUp.transform.position = transform.position;
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().setShowTime(0.5f);
-            if (parried)
+            if(damage * 3 > defense)
+               {
+                    if (parried)
             {
                 damageMessagePopUp.GetComponent<TextMeshPro>().text = "CRITICAL!!! ";
                 ParriedEnd();
@@ -200,6 +203,7 @@ public class MushController : MonoBehaviour
                 }
                 Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
                 
+               
                
                 damageMessagePopUp.GetComponent<TextMeshPro>().text = ((damage * 3 )- defense) + "";
                 health -= ((damage * 3 )- defense) ;
@@ -224,6 +228,15 @@ public class MushController : MonoBehaviour
                     GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
                 }
             }
+               }
+               else
+               {
+                    damageMessagePopUp.GetComponent<TextMeshPro>().text = (0) + " ";
+                    health -= (0);
+                    Instantiate(blood, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+                    Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+               }
+            
         
 
     }

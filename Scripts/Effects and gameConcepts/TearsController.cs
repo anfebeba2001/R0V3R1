@@ -18,10 +18,11 @@ public class TearsController : MonoBehaviour
     void Start()
     {
         currentValue = 0;
+        text.GetComponent<TextMeshPro>().text = "" + currentValue;
         player = GameObject.FindGameObjectWithTag("Player");
         player.GetComponent<BarryController>().addTears(finalValue);
         goingUpTimer = 3f;
-        justShowingTimer = 3;
+        justShowingTimer = 1;
     }
 
     // Update is called once per frame

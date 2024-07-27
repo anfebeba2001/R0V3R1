@@ -104,7 +104,7 @@ public class SlimeController : MonoBehaviour
                 coll.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
             coll.gameObject.SendMessage("BarryGotAttacked",30);
             
-            fixedBarryCoolDownAttack = 0.2f;
+            fixedBarryCoolDownAttack = 0.02f;
         }
 
 

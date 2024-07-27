@@ -358,6 +358,7 @@ public class BarryController : MonoBehaviour
                 }
                 else if(col.gameObject.name == "Purgatory")
                 {
+                    SaveManager.savePlayerData(defense,maxHealth,powerAttack,resistance,currentTears,healingVials,arrows,costPerUpgrade);
                     sceneTravelerController.Purgatory();
                 }
                 
@@ -641,7 +642,7 @@ public class BarryController : MonoBehaviour
     }
     public void BarryGotAttacked(float damage)
     {
-        if (!hurt && hurtCoolDown <= 0)
+        if (!hurt && hurtCoolDown <= 0 && health > 0)
         {
             if(isDashing){
                 isDashing = false;
@@ -655,7 +656,7 @@ public class BarryController : MonoBehaviour
             if(damage > defense)
             {
                 health -= (int)(damage - (defense + defenseBoofModifier));
-                damageMessagePopUp.GetComponent<TextMeshPro>().text = damage + "";
+                damageMessagePopUp.GetComponent<TextMeshPro>().text = ((int)(damage - (defense + defenseBoofModifier))) + "";
             }
             else
             {

@@ -40,6 +40,7 @@ public class BarrySwordAttackController : MonoBehaviour
             damage = (int)(parent.GetComponent<BarryController>().getPowerAttack() * 1.5f);
         }
         
+        damage += parent.GetComponent<BarryController>().getPowerBoofModifier();
         
         if ((coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Skeleton") && attackCoolDown <= 0)
         {
