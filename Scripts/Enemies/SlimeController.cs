@@ -18,6 +18,7 @@ public class SlimeController : MonoBehaviour
     private float firstDamageTimer;
     public float bottomLimitFallDown;
     private float fixedBarryCoolDownAttack;
+    private int amountOfTearsToDrop = 144;
 
     void Start()
     {
@@ -126,7 +127,7 @@ public class SlimeController : MonoBehaviour
     {
        Destroy(gameObject);
        tears.GetComponent<TearsController>().currentValue = 0;
-       tears.GetComponent<TearsController>().finalValue = 44;
+       tears.GetComponent<TearsController>().finalValue = amountOfTearsToDrop;
        Instantiate(tears, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
     }
 }

@@ -24,6 +24,7 @@ public class NecroController : MonoBehaviour
     private GameObject damageMessagePopUp;
     private bool taunted;
     private GameObject playerDetected;
+    private GameObject tears;
     private float health;
     private float maxHealth;
     private float attackCoolDown;
@@ -39,12 +40,14 @@ public class NecroController : MonoBehaviour
     private int meteoraCounter;
     private float posHelperMeteora;
     private float hittedCoolDown;
+    private int amountOfTearsToDrop = 774;
 
     void Start()
     {
+        tears = GetComponent<EnemyController>().getTears();
         resting = true;
         invincibleCoolDown = 5;
-        maxHealth = 100;
+        maxHealth = 500;
         health = maxHealth;
         blood = GetComponent<EnemyController>().getBlood();
         damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
@@ -259,7 +262,7 @@ public class NecroController : MonoBehaviour
     {
         GetComponent<Animator>().Play("NecroInvoke");
         summonCoolDown = 14f;
-        SkeletonSoldier.transform.position = new Vector3(transform.position.x+(Random.Range(-6,6)),transform.position.y+7,transform.position.z);
+        SkeletonSoldier.transform.position = new Vector3(transform.position.x+Random.Range(-6,6),transform.position.y+Random.Range(1,3),transform.position.z);
         if(SkeletonSoldier.transform.position.x > transform.position.x )
         {
             SkeletonSoldier.transform.localScale = new Vector3(-1,1,0);
@@ -307,6 +310,9 @@ public class NecroController : MonoBehaviour
     }
     void finishDeath()
     {
+        tears.GetComponent<TearsController>().currentValue = 0;
+       tears.GetComponent<TearsController>().finalValue = amountOfTearsToDrop;
+       Instantiate(tears, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
         Destroy(gameObject);
     }
 }

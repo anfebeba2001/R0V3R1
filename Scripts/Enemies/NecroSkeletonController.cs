@@ -12,13 +12,15 @@ public class NecroSkeletonController : MonoBehaviour
     public GameObject skeletonWave;
     private Vector3 fixedScale;
     private Vector3 fixedPos;
+    private GameObject tears;
     private bool hitted;
     private GameObject blood;
     private GameObject damageMessagePopUp;
-
+    private int amountOfTearsToDrop = 57;
 
     void Start()
     {
+        tears = GetComponent<EnemyController>().getTears();
         blood = GetComponent<EnemyController>().getBlood();
         damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
         hitted = false;
@@ -91,6 +93,9 @@ public class NecroSkeletonController : MonoBehaviour
     }
     void finishDeath()
     {
+        tears.GetComponent<TearsController>().currentValue = 0;
+       tears.GetComponent<TearsController>().finalValue = amountOfTearsToDrop;
+       Instantiate(tears, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
         Destroy(gameObject);
     }
     void Hitted(float damage)

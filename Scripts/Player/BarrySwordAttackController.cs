@@ -47,7 +47,7 @@ public class BarrySwordAttackController : MonoBehaviour
             coll.gameObject.GetComponent<EnemyController>().Hitted(damage);
             mainCamera.GetComponent<Camera>().orthographicSize -= 0.1f;
             attackCoolDown = 0f;
-            
+            GetComponent<AudioSource>().Play();
 
 
             buffsHelper.GetComponent<BuffsOnBarryHelper>().AttackingAnEnemy();

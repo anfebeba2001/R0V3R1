@@ -20,14 +20,17 @@ public class UndeadController : MonoBehaviour
     public float minLimitPos;
     public float maxLimitPos;
     private GameObject playerDetected;
+    private GameObject tears;
     
     private float normalRadius = 5;
     private float tauntedRadius = 5;
-    
+    private int amountOfTearsToDrop = 387;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        tears = GetComponent<EnemyController>().getTears();
         maxHealth = 200;
         health = maxHealth;
         blood = GetComponent<EnemyController>().getBlood();
@@ -146,6 +149,10 @@ public class UndeadController : MonoBehaviour
     }
     void finishDeath()
     {
+        tears.GetComponent<TearsController>().currentValue = 0;
+       tears.GetComponent<TearsController>().finalValue = amountOfTearsToDrop;
+       Instantiate(tears, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+        Destroy(gameObject);
         Destroy(gameObject);
     }
     void finishAttack()
@@ -156,5 +163,20 @@ public class UndeadController : MonoBehaviour
     {
         enemy.GetComponent<EnemyDetector>().setNormalRadius(normalRadius);
         enemy.GetComponent<EnemyDetector>().setTauntedRadius(tauntedRadius);
+    }
+    void OnCollisionStay2D(Collision2D coll)
+    {
+        if(coll.gameObject.tag == "Player")
+        {
+            
+            if (coll.gameObject.transform.position.x > transform.position.x)
+                coll.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.right * 3, ForceMode2D.Impulse);
+            else
+                coll.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.left * 3, ForceMode2D.Impulse);
+            coll.gameObject.SendMessage("BarryGotAttacked",30);
+            
+  
+        }
+
     }
 }

@@ -23,7 +23,7 @@ public class MushController : MonoBehaviour
 
     private float damage = 80;
     public float attackCoolDown;
-    private float health = 70;
+    private float health = 200;
     private float throwAwayForce;
     public bool finishingAttack;
     public float runningAwayLimit;
@@ -34,12 +34,12 @@ public class MushController : MonoBehaviour
     private GameObject blood;
     private bool parried;
     private bool hitted;
+    private int amountOfTearsToDrop = 387;
 
 
     // Start is called before the first frame update
     void Start()
     {      
-        health = 2;
         tears = GetComponent<EnemyController>().getTears();
         blood = GetComponent<EnemyController>().getBlood();
         damageMessagePopUp = GetComponent<EnemyController>().getDamageMessagePopUp();
@@ -185,8 +185,9 @@ public class MushController : MonoBehaviour
     }
     void Hitted(float damage)
     {
-        
-            blood.transform.position = transform.position;
+            if(health > 0)
+            {
+                    blood.transform.position = transform.position;
             damageMessagePopUp.transform.position = transform.position;
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().setShowTime(0.5f);
            
@@ -230,7 +231,9 @@ public class MushController : MonoBehaviour
                 }
             
                }
-                       
+              
+            }
+                     
         
 
     }
@@ -266,7 +269,7 @@ public class MushController : MonoBehaviour
     {
      
        tears.GetComponent<TearsController>().currentValue = 0;
-       tears.GetComponent<TearsController>().finalValue = 44;
+       tears.GetComponent<TearsController>().finalValue = amountOfTearsToDrop;
        Instantiate(tears, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
        Destroy(gameObject);
     }

@@ -7,9 +7,9 @@ public class FireBallScript : MonoBehaviour
     private new Rigidbody2D rigidbody2D;
     private GameObject player;
     private Vector2 direction;
-    private float timeLife = 2f;
+    private float timeLife = 10f;
     private float damage = 10;
-    private float speed = 0.07f;
+    private float speed = 0.7f;
     private bool chasing;
     // Start is called before the first frame update
     void Start()

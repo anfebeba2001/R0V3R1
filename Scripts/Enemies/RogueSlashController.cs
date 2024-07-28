@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RogueSlashController : MonoBehaviour
 {
-    public float damage;
+    private float damage = 1;
     private float microDamageTimer;
 
     // Start is called before the first frame update
@@ -31,7 +31,7 @@ public class RogueSlashController : MonoBehaviour
         {
             if(microDamageTimer <= 0)
             {
-                microDamageTimer = 0.2f;
+                microDamageTimer = 0.3f;
                 col.gameObject.SendMessage("microDamage", damage);
             }
         }
