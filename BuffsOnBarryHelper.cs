@@ -33,10 +33,8 @@ public class BuffsOnBarryHelper : MonoBehaviour
     public void AddBuff()
     {
         int selection = Random.Range(1,160);
-
         if(buffos[selection%16] ||  selection%16 == 7 || selection%16 == 12 || selection%16 == 13 ||  selection%16 == 14 ||  selection%16 == 15)
         {
-            Debug.Log("RollTheDice");
             AddBuff();
         }
         else
@@ -49,7 +47,7 @@ public class BuffsOnBarryHelper : MonoBehaviour
                     buffoText = "BENDICIÓN - Sol ascendente: Genera un aura que quema a los enemigos progresivamente.";
                 break;
                 case 1:
-                    buffoText = "BENDICIÓN - Lugar calmado: Te curas cada cierto tiempo un porcentaje de tu vida máxima.";    
+                    buffoText = "BENDICIÓN - Lugar calmado: Te curas un porcentaje de tu vida máxima cada cierto tiempo. ";    
                 break;
                 case 2:
                     buffoText = "BENDICIÓN - Resonancia: Genera cortes en el aire que aumentan el rango de tus ataques y traspasan enemigos.";    
@@ -61,7 +59,7 @@ public class BuffsOnBarryHelper : MonoBehaviour
                     buffoText = "BENDICIÓN - Sanguinario: Cuando atacas a un enemigo te curas un porcentaje de tu vida ";    
                 break;
                 case 5:
-                    buffoText = "BENDICIÓN - Mano firme: El daño que infliges  en un 30%.";    
+                    buffoText = "BENDICIÓN - Mano firme: El daño que infliges AUMENTA en un 30%.";    
                 break;
                 case 6:
                     buffoText = "BENDICIÓN - Severo: El daño que recibes disminuye en un 30%.";    
@@ -70,7 +68,7 @@ public class BuffsOnBarryHelper : MonoBehaviour
                     buffoText = "MALDICIÓN - Sollozante: El daño que recibes aumenta en un 20%.";    
                 break;
                 case 9:
-                    buffoText = "MALDICIÓN - Debilucho: El daño que infringes se reduce en 30%.";    
+                    buffoText = "MALDICIÓN - Debilucho: El daño que infliges REDUCE en 30%.";    
                 break;
                 case 10: 
                     buffoText = "MALDICIÓN - Pies heridos: Por cada salto o desplazamiento rápido que utilices, pierdes una pequeña cantidad de vida";   
@@ -101,12 +99,13 @@ public class BuffsOnBarryHelper : MonoBehaviour
         }
         if(buffos[8])
         {
-            player.GetComponent<BarryController>().setPowerBoofModifier((int)(player.GetComponent<BarryController>().getPowerBoofModifier() - (player.GetComponent<BarryController>().getPowerAttack() * 0.8f )));
+            player.GetComponent<BarryController>().setDefenseBoofModifier((int)(player.GetComponent<BarryController>().getDefenseBoofModifier() - (player.GetComponent<BarryController>().getDefense() * 2.5f )));
         }
         if(buffos[9])
         {
-            player.GetComponent<BarryController>().setDefenseBoofModifier((int)(player.GetComponent<BarryController>().getDefenseBoofModifier() - (player.GetComponent<BarryController>().getDefense() * 2.5f )));
+            player.GetComponent<BarryController>().setPowerBoofModifier((int)(player.GetComponent<BarryController>().getPowerBoofModifier() - (player.GetComponent<BarryController>().getPowerAttack() * 0.4f )));
         }
+        
     }
 
     // Start is called before the first frame update

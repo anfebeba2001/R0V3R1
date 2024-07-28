@@ -323,12 +323,12 @@ public class BarryController : MonoBehaviour
 
     private void ladderingAction()
     {
-        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.UpArrow) || moveDirection.x > 0)
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || moveDirection.x > 0)
         {
             GetComponent<Animator>().Play("BarryLadderingMove");
             transform.position += new Vector3(0,1,0)*0.05f;
         }
-        else if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.DownArrow) || moveDirection.x < 0)
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) || moveDirection.x < 0)
         {
             GetComponent<Animator>().Play("BarryLadderingMove");
             transform.position += new Vector3(0,-1,0)*0.05f;
@@ -623,8 +623,16 @@ public class BarryController : MonoBehaviour
             if(rigidbody2D.velocity.y <= 0){
                 animator.SetBool("Jumping", false);
             }
-            
+            if(rigidbody2D.velocity.y <= -8)
+            {
+                Debug.Log("Mi cai duro unu");
+            }
         }
+    }
+    void OnCollisionEnter2D(Collision2D coll)
+    {
+        
+        
     }
     void OnCollisionExit2D(Collision2D coll)
     {
@@ -634,7 +642,15 @@ public class BarryController : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D coll) {
         if (coll.gameObject.tag == "Ground")
+        {
             grounded = true;
+            
+        }
+        if (coll.gameObject.name == "EndOfTheGround")
+        {
+            health = -100;
+        }  
+         
     }
     void freeze(float time)
     {
@@ -653,7 +669,7 @@ public class BarryController : MonoBehaviour
 
             }
             
-            if(damage > defense)
+            if(damage > (defense + defenseBoofModifier))
             {
                 health -= (int)(damage - (defense + defenseBoofModifier));
                 damageMessagePopUp.GetComponent<TextMeshPro>().text = ((int)(damage - (defense + defenseBoofModifier))) + "";

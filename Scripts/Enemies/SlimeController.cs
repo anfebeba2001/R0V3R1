@@ -95,7 +95,7 @@ public class SlimeController : MonoBehaviour
             GetComponent<Animator>().Play("SlimeAttack");
         }
 
-        if(coll.gameObject.tag == "Player" && firstDamageTimer > 0)
+        if(coll.gameObject.tag == "Player"  && firstDamageTimer > 0)
         {
             
             if (coll.gameObject.transform.position.x > transform.position.x)

@@ -10,6 +10,8 @@ using Vector3 = UnityEngine.Vector3;
 
 public class MushController : MonoBehaviour
 {
+    public float maxPos;
+    public float minPos;
     private float normalRadius = 1.5f;
     private float tauntedRadius = 3f;
     public bool taunted;
@@ -21,7 +23,6 @@ public class MushController : MonoBehaviour
 
     private float damage = 80;
     public float attackCoolDown;
-    private float defense = 10;
     private float health = 70;
     private float throwAwayForce;
     public bool finishingAttack;
@@ -61,7 +62,7 @@ public class MushController : MonoBehaviour
       
         if (health <= 0)
         {
-            GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
+
             GetComponent<Rigidbody2D>().isKinematic = true;
             GetComponent<BoxCollider2D>().isTrigger = true;
             GetComponent<Animator>().Play("MushDying");
@@ -86,18 +87,19 @@ public class MushController : MonoBehaviour
             searching = true;
             playerDetected = GetComponentInParent<EnemyController>().getPlayerDetected();
         }
-        if (taunted && searching && !attacking && attackCoolDown <= 0 && !parried && health > 0)
+        if (taunted && searching && !attacking && attackCoolDown <= 0 && !parried && health > 0 &&
+            playerDetected.transform.position.y > transform.position.y - 1.5f &&
+            playerDetected.transform.position.y < transform.position.y + 1.5f &&
+            playerDetected.transform.position.x > minPos &&
+            playerDetected.transform.position.x < maxPos)
         {
-            GetComponent<Animator>().Play("MushRun");
             if (playerDetected.transform.position.x > transform.position.x)
             {
-                GetComponent<Rigidbody2D>().velocity = new Vector2(2,GetComponent<Rigidbody2D>().velocity.y);
                 transform.localScale = new Vector3(5.6f, 5.6f, 5.6f);
             }
             else if (playerDetected.transform.position.x < transform.position.x)
             {
                 transform.localScale = new Vector3(-5.6f, 5.6f, 5.6f);
-                GetComponent<Rigidbody2D>().velocity = new Vector2(-2,GetComponent<Rigidbody2D>().velocity.y);
             }
         }
         if (!searching && attacking && !finishingAttack && attackCoolDown <= 0 && health > 0 && !parried)
@@ -187,8 +189,7 @@ public class MushController : MonoBehaviour
             blood.transform.position = transform.position;
             damageMessagePopUp.transform.position = transform.position;
             damageMessagePopUp.GetComponent<DamageMessagePopUpController>().setShowTime(0.5f);
-            if(damage * 3 > defense)
-               {
+           
                     if (parried)
             {
                 damageMessagePopUp.GetComponent<TextMeshPro>().text = "CRITICAL!!! ";
@@ -205,8 +206,8 @@ public class MushController : MonoBehaviour
                 
                
                
-                damageMessagePopUp.GetComponent<TextMeshPro>().text = ((damage * 3 )- defense) + "";
-                health -= ((damage * 3 )- defense) ;
+
+                health -= ((damage * 3 )) ;
             
                 Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
                 Instantiate(blood, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
@@ -215,8 +216,8 @@ public class MushController : MonoBehaviour
             {
 
 
-                damageMessagePopUp.GetComponent<TextMeshPro>().text = (damage - defense) + " ";
-                health -= (damage - defense);
+                damageMessagePopUp.GetComponent<TextMeshPro>().text = (damage ) + " ";
+                health -= (damage );
                 Instantiate(blood, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
                 Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
                 if (playerDetected.transform.position.x < transform.position.x)
@@ -227,16 +228,9 @@ public class MushController : MonoBehaviour
                 {
                     GetComponent<Rigidbody2D>().AddForce(Vector2.left, ForceMode2D.Impulse);
                 }
-            }
-               }
-               else
-               {
-                    damageMessagePopUp.GetComponent<TextMeshPro>().text = (0) + " ";
-                    health -= (0);
-                    Instantiate(blood, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
-                    Instantiate(damageMessagePopUp, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
-               }
             
+               }
+                       
         
 
     }

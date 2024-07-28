@@ -209,7 +209,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 10
   m_LinearDrag: 1.49
   m_AngularDrag: 0.05
   m_GravityScale: 1
@@ -251,8 +251,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2648aa7be3aa6414c9aa502abd2419e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxDistance: 1
-  minDistance: -5
+  taunted: 0
+  searching: 0
+  attacking: 0
+  attackCoolDown: 0
+  finishingAttack: 0
   runningAwayLimit: 20
   colliderHelper: {fileID: 8924103657357537070}
 --- !u!61 &2710523734090479910

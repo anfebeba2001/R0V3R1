@@ -96,26 +96,30 @@ public class UndeadController : MonoBehaviour
             playerDetected = GetComponentInParent<EnemyController>().getPlayerDetected();
             if (playerDetected != null)
             {
-                if(playerDetected.transform.position.y > transform.position.y - 0.5f && playerDetected.transform.position.y < transform.position.y + 0.5f)
+                if(playerDetected.transform.position.y > transform.position.y - 1f && playerDetected.transform.position.y < transform.position.y + 1f)
                 {
+                    Debug.Log("Está a mi altura");
                     if(playerDetected.transform.position.x <  maxLimitPos && playerDetected.transform.position.x > minLimitPos)
                     {
+                        Debug.Log("Está a en mi rango");
                         if(transform.localScale.x > 0)
                         {
                             if(playerDetected.transform.position.x >  transform.position.x)
                             {
+                                Debug.Log("Está Delante de mi");
                                 attacking = true;                                
                                 if(transform.position.x < maxLimitPos)
-                                    transform.position += Vector3.right*0.27f;
+                                    transform.position += Vector3.right*0.12f;
                             }
                         }
                         else
                         {
                             if(playerDetected.transform.position.x <  transform.position.x)
                             {
+                                Debug.Log("Está detrás de mi2");
                                 attacking = true;                                
                                 if(transform.position.x > minLimitPos)
-                                    transform.position += Vector3.left*0.27f;
+                                    transform.position += Vector3.left*0.12f;
                             }                            
                         }
                     }
