@@ -1,12 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Microsoft.Unity.VisualStudio.Editor;
+
 using TMPro;
-using UnityEditor;
-using UnityEditor.UI;
+
 using UnityEngine;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class BuffsOnBarryHelper : MonoBehaviour
